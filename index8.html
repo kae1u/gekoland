@@ -1,0 +1,3267 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ゲコランド</title>
+    <meta name="robots" content="noindex, nofollow">
+    <style>
+        :root {
+            --bg-primary: #1a1d23;
+            --bg-secondary: #22262e;
+            --bg-tertiary: #13151a;
+            --bg-hover: #2a2f3a;
+            --bg-card: #1e2229;
+            --bg-input: #13151a;
+            --border: #2e3340;
+            --border-subtle: #252a33;
+            --text-primary: #e8eaf0;
+            --text-secondary: #8a909e;
+            --text-muted: #565c6e;
+            --accent: #4ade80;
+            --accent-dim: #22c55e;
+            --accent-hover: #16a34a;
+            --accent-light: rgba(74, 222, 128, 0.12);
+            --accent-glow: rgba(74, 222, 128, 0.25);
+            --danger: #f87171;
+            --danger-hover: #dc2626;
+            --warn: #fbbf24;
+            --like-color: #fb7185;
+            --repost-color: #4ade80;
+            --quote-color: #a78bfa;
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+            --font-main: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', system-ui, sans-serif;
+            --transition: 0.15s ease;
+            --sidebar-w: 240px;
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #f8fafb;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #eef1f5;
+            --bg-hover: #f0f4f8;
+            --bg-card: #ffffff;
+            --bg-input: #f0f4f8;
+            --border: #dde3ec;
+            --border-subtle: #eaeff5;
+            --text-primary: #1a1f2e;
+            --text-secondary: #5a6478;
+            --text-muted: #9aa3b4;
+            --accent: #16a34a;
+            --accent-dim: #15803d;
+            --accent-hover: #14532d;
+            --accent-light: rgba(22, 163, 74, 0.1);
+            --accent-glow: rgba(22, 163, 74, 0.2);
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: background var(--transition), color var(--transition);
+        }
+
+        a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        img {
+            max-width: 100%;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            font-family: inherit;
+        }
+
+        input,
+        textarea {
+            font-family: inherit;
+        }
+
+        /* ===== ボタン ===== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 9px 18px;
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-weight: 600;
+            transition: all var(--transition);
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: var(--bg-secondary);
+            box-shadow: 0 0 0 0 var(--accent-glow);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-dim);
+            box-shadow: 0 0 16px var(--accent-glow);
+        }
+
+        .btn-secondary {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: #fff;
+        }
+
+        .btn-danger:hover {
+            background: var(--danger-hover);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+            padding: 7px 12px;
+        }
+
+        .btn-ghost:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+
+        .btn-lg {
+            padding: 13px 28px;
+            font-size: 16px;
+            border-radius: var(--radius-lg);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--accent);
+            border: 1.5px solid var(--accent);
+        }
+
+        .btn-outline:hover {
+            background: var(--accent-light);
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 11px 14px;
+            background: var(--bg-input);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: border-color var(--transition), box-shadow var(--transition);
+            outline: none;
+        }
+
+        .input-field:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-light);
+        }
+
+        .input-field::placeholder {
+            color: var(--text-muted);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .form-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .form-error {
+            font-size: 12px;
+            color: var(--danger);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* ===== トースト ===== */
+        .toast {
+            position: fixed;
+            bottom: 28px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 12px 22px;
+            border-radius: var(--radius-xl);
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease;
+            opacity: 0;
+            z-index: 9999;
+            white-space: nowrap;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            border-color: var(--accent);
+        }
+
+        .toast.error {
+            border-color: var(--danger);
+        }
+
+        /* ===== アバター ===== */
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+                border: 1px solid var(--border);
+        }
+
+        .avatar-sm {
+            width: 32px;
+            height: 32px;
+        }
+
+        .avatar-lg {
+            width: 76px;
+            height: 76px;
+        }
+
+        .avatar-placeholder {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dim) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: var(--bg-secondary);
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+
+        .avatar-placeholder.sm {
+            width: 32px;
+            height: 32px;
+            font-size: 13px;
+        }
+
+        .avatar-placeholder.lg {
+            width: 76px;
+            height: 76px;
+            font-size: 30px;
+        }
+
+        .avatar-link {
+            cursor: pointer;
+            transition: opacity var(--transition);
+        }
+
+        .avatar-link:hover {
+            opacity: 0.8;
+        }
+
+        /* ===== ローディング ===== */
+        .loading-spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+
+        .loading-spinner.lg {
+            width: 32px;
+            height: 32px;
+            border-width: 3px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ===== ランディングページ ===== */
+        .landing-page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .landing-nav {
+            padding: 20px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .landing-nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .landing-nav-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .landing-hero {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 24px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .landing-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 60% 50% at 50% 40%, var(--accent-glow) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .landing-frog-icon {
+            width: 96px;
+            height: 96px;
+            margin: 0 auto 24px;
+            filter: drop-shadow(0 0 24px var(--accent-glow));
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        .landing-title {
+            font-size: 48px;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            line-height: 1.1;
+        }
+
+        .landing-title span {
+            color: var(--accent);
+        }
+
+        .landing-subtitle {
+            font-size: 17px;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            max-width: 340px;
+            line-height: 1.7;
+        }
+
+        .landing-cta {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .landing-cta .btn {
+            min-width: 148px;
+            justify-content: center;
+        }
+
+        .landing-features {
+            display: flex;
+            gap: 0;
+            border-top: 1px solid var(--border-subtle);
+            background: var(--bg-secondary);
+        }
+
+        .landing-feature {
+            flex: 1;
+            padding: 28px 32px;
+            text-align: center;
+            border-right: 1px solid var(--border-subtle);
+        }
+
+        .landing-feature:last-child {
+            border-right: none;
+        }
+
+        .landing-feature-icon {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .landing-feature-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .landing-feature-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* ===== 認証ページ ===== */
+        .auth-page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background: var(--bg-tertiary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-page::before {
+            content: '';
+            position: absolute;
+            top: -200px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 420px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 36px;
+            box-shadow: var(--shadow);
+            position: relative;
+            z-index: 1;
+        }
+
+        .auth-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 28px;
+        }
+
+        .auth-logo-text {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .auth-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .auth-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .auth-footer {
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 20px;
+        }
+
+        .auth-footer a {
+            color: var(--accent);
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .auth-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--text-muted);
+            font-size: 13px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .auth-back:hover {
+            color: var(--text-secondary);
+        }
+
+        .rules-box {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 14px 16px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .rules-box h4 {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .rules-box h4 svg {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+        }
+
+        .rules-box ul {
+            padding-left: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        /* ===== メインレイアウト（ログイン済み） ===== */
+        .app-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* サイドバー */
+        .sidebar {
+            width: var(--sidebar-w);
+            flex-shrink: 0;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            z-index: 200;
+            transition: transform var(--transition);
+        }
+
+        .sidebar-header {
+            padding: 20px 16px 16px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--accent);
+            cursor: pointer;
+            padding: 8px 10px;
+            border-radius: var(--radius-md);
+            transition: background var(--transition);
+        }
+
+        .sidebar-logo:hover {
+            background: var(--accent-light);
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 12px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .sidebar-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 11px 14px;
+            border-radius: var(--radius-md);
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            width: 100%;
+            text-align: left;
+            transition: background var(--transition), color var(--transition);
+        }
+
+        .sidebar-nav-item:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .sidebar-nav-item.active {
+            background: var(--accent-light);
+            color: var(--accent);
+        }
+
+        .sidebar-nav-item svg {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-post-btn {
+            margin: 10px;
+            padding: 13px;
+            background: var(--accent);
+            color: var(--bg-secondary);
+            border: none;
+            border-radius: var(--radius-lg);
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all var(--transition);
+            box-shadow: 0 0 0 0 var(--accent-glow);
+        }
+
+        .sidebar-post-btn:hover {
+            background: var(--accent-dim);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .sidebar-post-btn:active {
+            transform: scale(0.97);
+        }
+
+        .sidebar-user {
+            padding: 14px;
+            border-top: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            border-radius: var(--radius-md);
+            margin: 4px;
+            transition: background var(--transition);
+        }
+
+        .sidebar-user:hover {
+            background: var(--bg-hover);
+        }
+
+        .sidebar-user-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .sidebar-user-name {
+            font-size: 14px;
+            font-weight: 700;
+            truncate;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .sidebar-user-handle {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* テーマボタン */
+        .theme-btn {
+            background: var(--bg-hover);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition);
+            flex-shrink: 0;
+        }
+
+        .theme-btn:hover {
+            background: var(--border);
+        }
+
+        .theme-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* メインコンテンツエリア */
+        .main-area {
+            flex: 1;
+            margin-left: var(--sidebar-w);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .main-content {
+            width: 100%;
+            max-width: 600px;
+            padding: 20px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* 文字選択禁止 */
+        * {
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .post-content,
+        .quote-block-content,
+        .quote-preview-content,
+        .user-profile-bio,
+        .post-textarea,
+        .input-field,
+        textarea,
+        .sidebar-user-name,
+        .sidebar-user-handle {
+            user-select: text;
+            -webkit-user-select: text;
+        }
+
+        /* theme-btn SVGは常にcurrentColor（ダークモード対応） */
+        .theme-btn {
+            color: var(--text-primary);
+        }
+
+        .theme-btn svg {
+            color: inherit;
+            stroke: currentColor;
+        }
+
+        /* SVGアイコンサイズの統一 */
+        .sidebar-post-btn svg {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
+
+        .user-profile-meta svg {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+        }
+
+        .btn svg {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+        }
+
+        .btn-lg svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .post-repost-label svg {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+        }
+
+        .icon-upload-btn svg {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+        }
+
+        /* モバイルトップバー（サイドバーの代わり） */
+        .mobile-topbar {
+            display: none;
+            width: 100%;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 0 16px;
+            height: 54px;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .mobile-topbar-logo {
+            font-size: 17px;
+            font-weight: 800;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            cursor: pointer;
+        }
+
+        .mobile-topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* モバイルボトムナビ */
+        .mobile-bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 200;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            padding: 8px 0 env(safe-area-inset-bottom, 8px);
+        }
+
+        .mobile-bottom-nav-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+        }
+
+        .mobile-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            padding: 6px 16px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: 600;
+            transition: color var(--transition);
+        }
+
+        .mobile-nav-item svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .mobile-nav-item.active {
+            color: var(--accent);
+        }
+
+        .mobile-nav-item:hover {
+            color: var(--text-primary);
+        }
+
+        .mobile-nav-post {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: #0f1a12;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 16px var(--accent-glow);
+            transition: all var(--transition);
+            flex-shrink: 0;
+        }
+
+        .mobile-nav-post:hover {
+            background: var(--accent-dim);
+        }
+
+        .mobile-nav-post svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        /* ===== タイムラインヘッダー ===== */
+        .feed-header {
+            padding: 16px 0 4px;
+            border-bottom: 1px solid var(--border-subtle);
+            margin-bottom: 4px;
+        }
+
+        .feed-header-title {
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        /* ===== 投稿フォーム ===== */
+        .post-form {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .post-form-inner {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .post-textarea {
+            width: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--text-primary);
+            font-size: 16px;
+            resize: none;
+            min-height: 64px;
+            line-height: 1.6;
+        }
+
+        .post-textarea::placeholder {
+            color: var(--text-muted);
+        }
+
+        .post-form-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 1px solid var(--border-subtle);
+            padding-top: 10px;
+        }
+
+        .char-count {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .char-count.warn {
+            color: var(--warn);
+        }
+
+        .char-count.over {
+            color: var(--danger);
+        }
+
+        /* ===== 投稿カード ===== */
+        .post-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .post-body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            margin-bottom: 4px;
+            flex-wrap: wrap;
+        }
+
+        .post-username {
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        .post-username:hover {
+            color: var(--accent);
+            text-decoration: underline;
+        }
+
+        .post-time {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .post-repost-label {
+            font-size: 12px;
+            color: var(--repost-color);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 4px;
+        }
+
+        .post-content {
+            font-size: 15px;
+            line-height: 1.65;
+            color: var(--text-primary);
+            word-break: break-word;
+            white-space: pre-wrap;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 2px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            background: transparent;
+            color: var(--text-muted);
+            transition: all var(--transition);
+            border: none;
+            cursor: pointer;
+        }
+
+        .action-btn svg {
+            width: 15px;
+            height: 15px;
+            flex-shrink: 0;
+        }
+
+        .action-btn:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .action-btn.liked {
+            color: var(--like-color);
+        }
+
+        .action-btn.reposted {
+            color: var(--repost-color);
+        }
+
+        .action-btn.liked:hover {
+            background: rgba(251, 113, 133, 0.1);
+        }
+
+        .action-btn.reposted:hover {
+            background: rgba(74, 222, 128, 0.1);
+        }
+
+        .action-btn .count {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* 引用ブロック */
+        .quote-block {
+            margin-top: 10px;
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--quote-color);
+            border-radius: var(--radius-md);
+            padding: 10px 14px;
+            background: var(--bg-secondary);
+            font-size: 13px;
+        }
+
+        .quote-block-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 4px;
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        .quote-block-username {
+            font-weight: 700;
+            cursor: pointer;
+            color: var(--text-primary);
+        }
+
+        .quote-block-username:hover {
+            text-decoration: underline;
+            color: var(--accent);
+        }
+
+        .quote-block-content {
+            color: var(--text-primary);
+            line-height: 1.5;
+            word-break: break-word;
+            white-space: pre-wrap;
+        }
+
+        .quote-preview {
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--quote-color);
+            border-radius: var(--radius-md);
+            padding: 10px 14px;
+            background: var(--bg-secondary);
+            margin-bottom: 14px;
+        }
+
+        .quote-preview-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 4px;
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        .quote-preview-username {
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .quote-preview-content {
+            font-size: 13px;
+            color: var(--text-primary);
+            line-height: 1.5;
+            word-break: break-word;
+            white-space: pre-wrap;
+            max-height: 80px;
+            overflow: hidden;
+        }
+
+        /* ===== プロフィール ===== */
+        .user-profile-header {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+            text-align: center;
+        }
+
+        .user-profile-avatar-wrap {
+            position: relative;
+        }
+
+        .user-profile-name {
+            font-size: 22px;
+            font-weight: 800;
+        }
+
+        .user-profile-handle {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .user-profile-bio {
+            font-size: 14px;
+            color: var(--text-secondary);
+            max-width: 400px;
+            white-space: pre-wrap;
+            word-break: break-word;
+            line-height: 1.6;
+        }
+
+        .user-profile-meta {
+            font-size: 12px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .user-profile-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .profile-page {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .profile-icon-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .icon-upload-btn {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .icon-upload-btn input[type=file] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        /* ===== モーダル ===== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 16px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 28px;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: var(--shadow);
+            transform: scale(0.94) translateY(10px);
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .modal-overlay.open .modal-card {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 18px;
+        }
+
+        /* ===== 投稿モーダル ===== */
+        .post-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            z-index: 1000;
+            padding: 60px 16px 16px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        .post-modal-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .post-modal-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 20px;
+            width: 100%;
+            max-width: 560px;
+            box-shadow: var(--shadow);
+            transform: translateY(-16px);
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .post-modal-overlay.open .post-modal-card {
+            transform: translateY(0);
+        }
+
+        .post-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .post-modal-title {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .post-modal-close {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--bg-hover);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            transition: all var(--transition);
+        }
+
+        .post-modal-close:hover {
+            background: var(--border);
+            color: var(--text-primary);
+        }
+
+        .post-modal-close svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* ===== その他UI ===== */
+        .load-more-wrap {
+            display: flex;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 23px 16px;
+            color: var(--text-muted);
+        }
+
+        .empty-state-icon {
+            font-size: 52px;
+            margin-bottom: 14px;
+        }
+
+        .empty-state p {
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        .section-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            padding: 12px 0 8px;
+        }
+
+        /* 続きを表示 */
+        .post-content-collapsed {
+            max-height: 5.5em; /* 約3〜4行分 */
+            overflow: hidden;
+            position: relative;
+        }
+
+        .post-content-collapsed::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2em;
+            background: linear-gradient(transparent, var(--bg-card));
+        }
+
+        .expand-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 13px;
+            color: var(--accent);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 2px 0;
+            margin-top: 4px;
+            font-family: inherit;
+            font-weight: 600;
+        }
+
+        .expand-btn:hover {
+            text-decoration: underline;
+        }
+
+        /* 編集モーダル */
+        .edit-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            z-index: 1000;
+            padding: 60px 16px 16px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        .edit-modal-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .edit-modal-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 20px;
+            width: 100%;
+            max-width: 560px;
+            box-shadow: var(--shadow);
+            transform: translateY(-16px);
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .edit-modal-overlay.open .edit-modal-card {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 680px) {
+            .edit-modal-overlay {
+                padding: 0;
+                align-items: flex-end;
+            }
+            .edit-modal-card {
+                border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+            }
+        }
+        @media (max-width: 680px) {
+            :root {
+                --sidebar-w: 0px;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .main-area {
+                margin-left: 0;
+            }
+
+            .mobile-topbar {
+                display: flex;
+            }
+
+            .mobile-bottom-nav {
+                display: block;
+            }
+
+            .main-content {
+                padding: 12px 10px 80px;
+            }
+
+            .landing-nav {
+                padding: 16px 20px;
+            }
+
+            .landing-title {
+                font-size: 34px;
+            }
+
+            .landing-features {
+                flex-direction: column;
+            }
+
+            .landing-feature {
+                border-right: none;
+                border-bottom: 1px solid var(--border-subtle);
+            }
+
+            .landing-feature:last-child {
+                border-bottom: none;
+            }
+
+            .auth-card {
+                padding: 28px 20px;
+            }
+
+            .post-modal-overlay {
+                padding: 0;
+                align-items: flex-end;
+            }
+
+            .post-modal-card {
+                border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+            }
+
+            .post-card {
+                padding: 12px;
+                gap: 9px;
+            }
+
+            .post-actions {
+                gap: 0;
+            }
+
+            .action-btn {
+                padding: 5px 8px;
+                font-size: 12px;
+                gap: 4px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .landing-title {
+                font-size: 28px;
+            }
+
+            .landing-cta .btn {
+                font-size: 14px;
+                min-width: 120px;
+            }
+
+            .auth-card {
+                padding: 22px 14px;
+            }
+
+            .modal-card {
+                padding: 20px 16px;
+            }
+
+            .post-card {
+                padding: 10px;
+            }
+
+            .main-content {
+                padding: 8px 8px 80px;
+                gap: 8px;
+            }
+
+            .btn-sm {
+                padding: 5px 10px;
+                font-size: 12px;
+            }
+
+            .user-profile-header {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app"></div>
+    <div id="toast" class="toast"></div>
+
+    <!-- 編集モーダル -->
+    <div class="edit-modal-overlay" id="editModal">
+        <div class="edit-modal-card">
+            <div class="post-modal-header">
+                <div class="post-modal-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        style="width:18px;height:18px;color:var(--accent);display:inline;margin-right:6px"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                    投稿を編集
+                </div>
+                <button class="post-modal-close" onclick="closeEditModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M18 6 6 18M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div style="display:flex;gap:12px">
+                <div id="editModalAvatar"></div>
+                <div style="flex:1;display:flex;flex-direction:column;gap:10px">
+                    <textarea class="post-textarea" id="editContent" oninput="updateEditCharCount()"
+                        maxlength="520" style="min-height:80px;font-size:16px"></textarea>
+                    <div class="post-form-footer">
+                        <span class="char-count" id="editCharCount">0 / 500</span>
+                        <button class="btn btn-primary btn-sm" onclick="submitEdit()" id="editBtn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                                style="width:14px;height:14px" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                            </svg>
+                            保存する
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引用モーダル -->
+    <div class="modal-overlay" id="quoteModal">
+        <div class="modal-card">
+            <div class="modal-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    style="width:20px;height:20px;color:var(--quote-color)">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                </svg>
+                引用再ゲコ
+            </div>
+            <div id="quotePreview" class="quote-preview"></div>
+            <div class="form-group">
+                <label class="form-label">コメント</label>
+                <textarea class="input-field" id="quoteContent" rows="3" maxlength="520" placeholder="コメントを入力…"
+                    oninput="updateQuoteCharCount()" style="min-height:80px;resize:none"></textarea>
+                <span class="char-count" id="quoteCharCount">0 / 500</span>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary btn-sm" onclick="closeQuoteModal()">キャンセル</button>
+                <button class="btn btn-primary btn-sm" id="quoteSubmitBtn" onclick="submitQuote()">
+                    <svg viewBox="0 0 24 24" fill="currentColor" style="width:14px;height:14px">
+                        <path
+                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z" />
+                    </svg>
+                    引用再ゲコ
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 投稿モーダル（ゲコるボタン用） -->
+    <div class="post-modal-overlay" id="postModal">
+        <div class="post-modal-card">
+            <div class="post-modal-header">
+                <div class="post-modal-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        style="width:18px;height:18px;color:var(--accent);display:inline;margin-right:6px">
+                        <path d="M12 5v14M5 12h14" />
+                    </svg>
+                    ゲコる
+                </div>
+                <button class="post-modal-close" onclick="closePostModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M18 6 6 18M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div style="display:flex;gap:12px">
+                <div id="postModalAvatar"></div>
+                <div style="flex:1;display:flex;flex-direction:column;gap:10px">
+                    <textarea class="post-textarea" id="postContent" placeholder="ゲコろう" oninput="updateCharCount()"
+                        onkeydown="handlePostKey(event)" maxlength="520"
+                        style="min-height:80px;font-size:16px"></textarea>
+                    <div class="post-form-footer">
+                        <span class="char-count" id="charCount">0 / 500</span>
+                        <button class="btn btn-primary btn-sm" onclick="submitPost()" id="postBtn">
+                            <svg viewBox="0 0 24 24" fill="currentColor" style="width:14px;height:14px">
+                                <path d="M2 21l21-9L2 3v7l15 2-15 2z" />
+                            </svg>
+                            ゲコる
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        'use strict';
+
+        // ============================================================
+        // SVGアイコン
+        // ============================================================
+        const ICONS = {
+            frog: `<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="24" cy="28" rx="18" ry="14" fill="var(--accent)"></ellipse>
+    <circle cx="10" cy="16" r="8" fill="var(--accent)"></circle>
+    <circle cx="38" cy="16" r="8" fill="var(--accent)"></circle>
+    <circle cx="10" cy="14" r="5" fill="#fff"></circle>
+    <circle cx="38" cy="14" r="5" fill="#fff"></circle>
+    <circle cx="10" cy="14" r="3" fill="#1a1d23"></circle>
+    <circle cx="38" cy="14" r="3" fill="#1a1d23"></circle>
+    <path d="M18 30 Q24 35 30 30" stroke="#0f1a12" stroke-width="2" stroke-linecap="round" fill="none"></path>
+  </svg>`,
+            home: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
+            user: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
+            logout: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>`,
+            edit: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`,
+            heart: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`,
+            heartFill: `<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`,
+            repost: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>`,
+            quote: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`,
+            trash: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>`,
+            sun: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`,
+            moon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`,
+            plus: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>`,
+            calendar: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
+            arrowLeft: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>`,
+            camera: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>`,
+        };
+
+        // ============================================================
+        // 設定
+        // ============================================================
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycbxj48ntzBC93jDTTnIH24jUnwMJJebUwOQzQzRO1RDuOlOpSSZFvV5eUqdnzmBnkZuK/exec';
+        const MAX_POST_LENGTH = 500;
+        const AUTO_REFRESH_INTERVAL = 10000;
+
+        // ============================================================
+        // 状態管理
+        // ============================================================
+        const state = {
+            token: localStorage.getItem('geko_token') || null,
+            userId: localStorage.getItem('geko_userId') || null,
+            username: localStorage.getItem('geko_username') || null,
+            iconBase64: localStorage.getItem('geko_icon') || null,
+            bio: '',
+            posts: [],
+            hasMore: true,
+            isLoadingMore: false,
+            autoRefreshTimer: null,
+            page: 'landing',
+            quotingPost: null,
+            editingPost: null,
+        };
+
+        // ============================================================
+        // GAS API 通信
+        // ============================================================
+        async function api(params) {
+            if (!GAS_URL) { showToast('GAS_URLが設定されていません', 'error'); throw new Error('no url'); }
+            return new Promise((resolve, reject) => {
+                const cbName = 'geko_cb_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+                const script = document.createElement('script');
+                const timeout = setTimeout(() => { cleanup(); reject(new Error('timeout')); }, 15000);
+                function cleanup() {
+                    clearTimeout(timeout);
+                    delete window[cbName];
+                    if (script.parentNode) script.parentNode.removeChild(script);
+                }
+                window[cbName] = (result) => { cleanup(); resolve(result); };
+                const payload = btoa(unescape(encodeURIComponent(JSON.stringify(params))));
+                script.src = `${GAS_URL}?callback=${cbName}&payload=${encodeURIComponent(payload)}`;
+                script.onerror = () => { cleanup(); reject(new Error('script load error')); };
+                document.head.appendChild(script);
+            });
+        }
+
+        // ============================================================
+        // ユーティリティ
+        // ============================================================
+        function esc(str) {
+            return String(str ?? '')
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+
+        function formatTime(isoStr) {
+            if (!isoStr) return '';
+            const d = new Date(isoStr);
+            const now = new Date();
+            const diff = (now - d) / 1000;
+            if (diff < 60) return 'たった今';
+            if (diff < 3600) return `${Math.floor(diff / 60)}分前`;
+            if (diff < 86400) return `${Math.floor(diff / 3600)}時間前`;
+            return `${d.getMonth() + 1}/${d.getDate()}`;
+        }
+
+        function showToast(msg, type = '') {
+            const el = document.getElementById('toast');
+            const icon = type === 'success' ? '🐸' : type === 'error' ? '⚠️' : '💬';
+            el.innerHTML = `<span>${icon}</span><span>${esc(msg)}</span>`;
+            el.className = `toast ${type}`;
+            void el.offsetWidth;
+            el.classList.add('show');
+            clearTimeout(el._timer);
+            el._timer = setTimeout(() => el.classList.remove('show'), 3000);
+        }
+
+        function avatarHtml(icon, username, size = '', clickable = false) {
+            const clickAttr = clickable ? ` onclick="navigateToUser('${esc(username)}')" style="cursor:pointer"` : '';
+            if (icon && icon.length > 10) {
+                const sz = size === 'lg' ? 'avatar avatar-lg' : size === 'sm' ? 'avatar avatar-sm' : 'avatar';
+                return `<img class="${sz}"${clickAttr} src="${icon}" alt="${esc(username)}">`;
+            }
+            const letter = (username || '?').charAt(0).toUpperCase();
+            const cls = size === 'lg' ? 'avatar-placeholder lg' : size === 'sm' ? 'avatar-placeholder sm' : 'avatar-placeholder';
+            return `<div class="${cls}"${clickAttr} aria-label="${esc(username)}">${letter}</div>`;
+        }
+
+        function initTheme() {
+            const saved = localStorage.getItem('geko_theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = saved || (prefersDark ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', theme);
+        }
+
+        function toggleTheme() {
+            const cur = document.documentElement.getAttribute('data-theme');
+            const next = cur === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('geko_theme', next);
+            // テーマボタン全更新
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                btn.innerHTML = next === 'dark' ? ICONS.sun : ICONS.moon;
+                btn.title = next === 'dark' ? 'ライトモードに切り替え' : 'ダークモードに切り替え';
+            });
+        }
+
+        function themeIcon() {
+            return document.documentElement.getAttribute('data-theme') !== 'light' ? ICONS.sun : ICONS.moon;
+        }
+
+        // ============================================================
+        // セッション管理
+        // ============================================================
+        function saveSession(token, userId, username, icon = '') {
+            state.token = token; state.userId = userId;
+            state.username = username; state.iconBase64 = icon;
+            localStorage.setItem('geko_token', token);
+            localStorage.setItem('geko_userId', userId);
+            localStorage.setItem('geko_username', username);
+            if (icon) localStorage.setItem('geko_icon', icon);
+        }
+
+        function clearSession() {
+            state.token = null; state.userId = null;
+            state.username = null; state.iconBase64 = null;
+            localStorage.removeItem('geko_token');
+            localStorage.removeItem('geko_userId');
+            localStorage.removeItem('geko_username');
+            localStorage.removeItem('geko_icon');
+        }
+
+        // ============================================================
+        // URLルーティング
+        // ============================================================
+        function getUrlParams() {
+            const p = new URLSearchParams(window.location.search);
+            return { page: p.get('page') || '', user: p.get('user') || '' };
+        }
+
+        function pushUrl(page, extra = {}) {
+            const p = new URLSearchParams();
+            if (page) p.set('page', page);
+            Object.entries(extra).forEach(([k, v]) => p.set(k, v));
+            const url = p.toString() ? window.location.pathname + '?' + p.toString() : window.location.pathname;
+            history.pushState({ page, ...extra }, '', url);
+        }
+
+        window.addEventListener('popstate', () => {
+            const { page, user } = getUrlParams();
+            dispatchPage(page, user);
+        });
+
+        async function dispatchPage(page, user) {
+            clearAutoRefresh();
+            if (page === 'login') { render('login', false); return; }
+            if (page === 'register') { render('register', false); return; }
+            if (page === 'user' && user) { await renderUserProfilePage(user, false); return; }
+            if (page === 'profile-edit') {
+                if (!state.token) { render('login', false); return; }
+                await renderProfileEditPage(false); return;
+            }
+            if (page === 'profile' && user) { await renderUserProfilePage(user, false); return; }
+            if (state.token) {
+                await renderTimeline(false); // renderTimeline内で非同期にloadTimelineを呼ぶ
+            } else {
+                render('landing', false);
+            }
+        }
+
+        // ============================================================
+        // ページレンダリング
+        // ============================================================
+        function render(page, updateUrl = true) {
+            state.page = page;
+            clearAutoRefresh();
+            const app = document.getElementById('app');
+
+            if (updateUrl) {
+                if (page === 'timeline' || page === 'landing') pushUrl('');
+                else if (page === 'login') pushUrl('login');
+                else if (page === 'register') pushUrl('register');
+                else if (page === 'profile-edit') pushUrl('profile-edit');
+            }
+
+            switch (page) {
+                case 'landing': app.innerHTML = renderLanding(); break;
+                case 'login': app.innerHTML = renderLogin(); break;
+                case 'register': app.innerHTML = renderRegister(); break;
+                case 'timeline': renderTimeline(); break;
+                case 'profile-edit': renderProfileEditPage(); break;
+            }
+        }
+
+        async function navigateToUser(username) {
+            pushUrl('user', { user: username });
+            await renderUserProfilePage(username, false);
+        }
+
+        async function backToTimeline() {
+            pushUrl('');
+            await renderTimeline(false); // renderTimeline内で非同期にloadTimelineを呼ぶ
+        }
+
+        // ---- 未ログイントップ ----
+        function renderLanding() {
+            return `
+    <div class="landing-page">
+      <nav class="landing-nav">
+        <div class="landing-nav-logo">
+          <div style="width:32px;height:32px">${ICONS.frog}</div>
+          ゲコランド
+        </div>
+        <div class="landing-nav-actions">
+          <button class="theme-btn" onclick="toggleTheme()" title="テーマ切り替え">${themeIcon()}</button>
+          <button class="btn btn-ghost btn-sm" onclick="render('login')">ログイン</button>
+          <button class="btn btn-primary btn-sm" onclick="render('register')">新規登録</button>
+        </div>
+      </nav>
+
+      <div class="landing-hero">
+        <div class="landing-frog-icon">${ICONS.frog}</div>
+        <h1 class="landing-title">ゲコ<span>ランド</span></h1>
+        <p class="landing-subtitle">身内だけのゆるいSNS。<br>招待された人だけが参加できます。</p>
+        <div class="landing-cta">
+          <button class="btn btn-primary btn-lg" onclick="render('register')">
+            ${ICONS.plus}
+            はじめる
+          </button>
+          <button class="btn btn-outline btn-lg" onclick="render('login')">
+            ログイン
+          </button>
+        </div>
+      </div>
+
+      <div class="landing-features">
+        <div class="landing-feature">
+          <div class="landing-feature-icon">🔒</div>
+          <div class="landing-feature-title">招待制</div>
+          <div class="landing-feature-desc">知り合いだけの安心空間</div>
+        </div>
+        <div class="landing-feature">
+          <div class="landing-feature-icon">⚡</div>
+          <div class="landing-feature-title">リアルタイム</div>
+          <div class="landing-feature-desc">投稿が自動で更新される</div>
+        </div>
+        <div class="landing-feature">
+          <div class="landing-feature-icon">🐸</div>
+          <div class="landing-feature-title">ゲコる</div>
+          <div class="landing-feature-desc">いいね・再ゲコ・引用</div>
+        </div>
+      </div>
+    </div>
+  `;
+        }
+
+        // ---- ログイン ----
+        function renderLogin() {
+            return `
+    <div class="auth-page">
+      <div class="auth-card">
+        <div class="auth-logo">
+          <div style="width:40px;height:40px">${ICONS.frog}</div>
+          <span class="auth-logo-text">ゲコランド</span>
+        </div>
+        <h1 class="auth-title">おかえり！</h1>
+        <p class="auth-desc">アカウントにログインしてゲコろう</p>
+        <form class="auth-form" id="loginForm" onsubmit="submitLogin(event)">
+          <div class="form-group">
+            <label class="form-label">ユーザー名</label>
+            <input class="input-field" type="text" id="loginUsername" autocomplete="username" placeholder="username" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">パスワード</label>
+            <input class="input-field" type="password" id="loginPassword" autocomplete="current-password" placeholder="••••••••" required>
+          </div>
+          <div id="loginError" class="form-error" style="display:none">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span></span>
+          </div>
+          <button class="btn btn-primary" type="submit" id="loginSubmit" style="justify-content:center;width:100%;padding:13px">
+            ログイン
+          </button>
+        </form>
+        <div class="auth-footer">
+          アカウントがない？ <a onclick="render('register')">新規登録</a><br>
+          <a onclick="render('landing')" style="color:var(--text-muted)">← トップに戻る</a>
+        </div>
+      </div>
+    </div>
+  `;
+        }
+
+        async function submitLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const errEl = document.getElementById('loginError');
+            const btn = document.getElementById('loginSubmit');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading-spinner"></span>';
+            errEl.style.display = 'none';
+            try {
+                const res = await api({ action: 'login', username, password });
+                if (res.success) {
+                    saveSession(res.token, res.userId, res.username);
+                    await loadTimeline();
+                    pushUrl('');
+                    await renderTimeline(false);
+                } else {
+                    errEl.querySelector('span').textContent = res.error || 'ログインに失敗しました';
+                    errEl.style.display = 'flex';
+                }
+            } catch {
+                errEl.querySelector('span').textContent = 'サーバーに接続できませんでした';
+                errEl.style.display = 'flex';
+            } finally {
+                btn.disabled = false; btn.textContent = 'ログイン';
+            }
+        }
+
+        // ---- 新規登録 ----
+        function renderRegister() {
+            return `
+    <div class="auth-page">
+      <div class="auth-card">
+        <div class="auth-logo">
+          <div style="width:40px;height:40px">${ICONS.frog}</div>
+          <span class="auth-logo-text">ゲコランド</span>
+        </div>
+        <h1 class="auth-title">アカウント登録</h1>
+        <p class="auth-desc">招待コードが必要です</p>
+        <form class="auth-form" id="registerForm" onsubmit="submitRegister(event)">
+          <div class="form-group">
+            <label class="form-label">ユーザー名</label>
+            <input class="input-field" type="text" id="regUsername" placeholder="英小文字・数字・_のみ" pattern="^[a-z0-9_]+" required>
+            <span style="font-size:11px;color:var(--text-muted)">例：geko_user123</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label">パスワード</label>
+            <input class="input-field" type="password" id="regPassword" placeholder="英字と数字を含む6文字以上" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">招待コード</label>
+            <input class="input-field" type="text" id="regInvite" placeholder="招待コードを入力" required>
+          </div>
+          <div class="rules-box">
+            <h4>${ICONS.frog.replace('width="48" height="48"', 'width="14" height="14"').replace(/var\(--accent\)/g, 'currentColor')} ゲコランド利用ルール</h4>
+            <ul>
+              <li>荒らし行為・スパム投稿禁止</li>
+              <li>他人への誹謗中傷禁止</li>
+              <li>不適切なコンテンツの投稿禁止</li>
+              <li>管理者は投稿・アカウントを削除できます</li>
+              <li>身内向けのため予告なく停止する場合があります</li>
+            </ul>
+          </div>
+          <div id="regError" class="form-error" style="display:none">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span></span>
+          </div>
+          <button class="btn btn-primary" type="submit" id="regSubmit" style="justify-content:center;width:100%;padding:13px">
+            登録してゲコる
+          </button>
+        </form>
+        <div class="auth-footer">
+          すでに登録済みですか？ <a onclick="render('login')">ログイン</a><br>
+          <a onclick="render('landing')" style="color:var(--text-muted)">← トップに戻る</a>
+        </div>
+      </div>
+    </div>
+  `;
+        }
+
+        async function submitRegister(e) {
+            e.preventDefault();
+            const username = document.getElementById('regUsername').value.trim().toLowerCase();
+            const password = document.getElementById('regPassword').value;
+            const inviteCode = document.getElementById('regInvite').value.trim();
+            const errEl = document.getElementById('regError');
+            const btn = document.getElementById('regSubmit');
+            if (!/^[a-z0-9_]+$/.test(username)) {
+                errEl.querySelector('span').textContent = 'ユーザー名は英小文字・数字・アンダースコアのみ使用できます';
+                errEl.style.display = 'flex'; return;
+            }
+            if (password.length < 6 || !/[0-9]/.test(password) || !/[a-zA-Z]/.test(password)) {
+                errEl.querySelector('span').textContent = 'パスワードは英字と数字を含む6文字以上にしてください';
+                errEl.style.display = 'flex'; return;
+            }
+            btn.disabled = true; btn.innerHTML = '<span class="loading-spinner"></span>';
+            errEl.style.display = 'none';
+            try {
+                const res = await api({ action: 'register', username, password, inviteCode });
+                if (res.success) {
+                    saveSession(res.token, res.userId, res.username);
+                    await loadTimeline();
+                    pushUrl('');
+                    await renderTimeline(false);
+                    showToast('登録完了！ゲコランドへようこそ', 'success');
+                } else {
+                    errEl.querySelector('span').textContent = res.error || '登録に失敗しました';
+                    errEl.style.display = 'flex';
+                }
+            } catch {
+                errEl.querySelector('span').textContent = 'サーバーに接続できませんでした';
+                errEl.style.display = 'flex';
+            } finally {
+                btn.disabled = false; btn.innerHTML = '🐸 登録してゲコる';
+            }
+        }
+
+        // ============================================================
+        // タイムライン
+        // ============================================================
+        async function renderTimeline(updateUrl = true) {
+            state.page = 'timeline';
+            if (updateUrl) pushUrl('');
+
+            document.getElementById('app').innerHTML = `
+    <div class="app-layout">
+      <!-- サイドバー -->
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <div class="sidebar-logo" onclick="backToTimeline()">
+            <div style="width:28px;height:28px">${ICONS.frog}</div>
+            ゲコランド
+          </div>
+        </div>
+        <nav class="sidebar-nav">
+          <button class="sidebar-nav-item active" onclick="backToTimeline()">
+            ${ICONS.home} ホーム
+          </button>
+          <button class="sidebar-nav-item" onclick="navigateToUser('${esc(state.username)}')">
+            ${ICONS.user} プロフィール
+          </button>
+          <button class="sidebar-nav-item" onclick="doLogout()">
+            ${ICONS.logout} ログアウト
+          </button>
+        </nav>
+        <button class="sidebar-post-btn" onclick="openPostModal()">
+          ${ICONS.plus}
+          ゲコる
+        </button>
+        <div class="sidebar-user" onclick="navigateToUser('${esc(state.username)}')">
+          ${avatarHtml(state.iconBase64, state.username)}
+          <div class="sidebar-user-info">
+            <div class="sidebar-user-name">${esc(state.username)}</div>
+            <div class="sidebar-user-handle">@${esc(state.username)}</div>
+          </div>
+          <button class="theme-btn" onclick="event.stopPropagation();toggleTheme()" title="テーマ切り替え">${themeIcon()}</button>
+        </div>
+      </aside>
+
+      <!-- メインエリア -->
+      <div class="main-area">
+        <!-- モバイルトップバー -->
+        <div class="mobile-topbar">
+          <div class="mobile-topbar-logo" onclick="backToTimeline()">
+            <div style="width:26px;height:26px">${ICONS.frog}</div>
+            ゲコランド
+          </div>
+          <div class="mobile-topbar-actions">
+            <button class="theme-btn" onclick="toggleTheme()">${themeIcon()}</button>
+          </div>
+        </div>
+
+        <div class="main-content">
+          <!-- インライン投稿フォーム -->
+          <div class="post-form" id="inlinePostForm">
+            ${avatarHtml(state.iconBase64, state.username)}
+            <div class="post-form-inner">
+              <textarea class="post-textarea" id="inlinePostContent" placeholder="ゲコろう"
+                oninput="updateInlineCharCount()" onkeydown="handleInlinePostKey(event)" maxlength="520" style="min-height:56px;font-size:15px"></textarea>
+              <div class="post-form-footer">
+                <span class="char-count" id="inlineCharCount">0 / 500</span>
+                <button class="btn btn-primary btn-sm" onclick="submitInlinePost()" id="inlinePostBtn">
+                  ゲコる
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div id="timeline">
+            <div style="text-align:center;padding:32px"><span class="loading-spinner lg"></span></div>
+          </div>
+          <div id="loadMoreWrap" class="load-more-wrap" style="display:none">
+            <button class="btn btn-secondary" onclick="loadMore()">もっと見る</button>
+          </div>
+          <div id="timelineEmpty" class="empty-state" style="display:none">
+            <div class="empty-state-icon">🐸</div>
+            <p>まだ投稿がありません。<br>最初にゲコってみよう！</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- モバイルボトムナビ -->
+    <div class="mobile-bottom-nav">
+      <div class="mobile-bottom-nav-inner">
+        <button class="mobile-nav-item active" onclick="backToTimeline()">
+          ${ICONS.home}
+          ホーム
+        </button>
+        <button class="mobile-nav-item" onclick="navigateToUser('${esc(state.username)}')">
+          ${ICONS.user}
+          プロフィール
+        </button>
+        <button class="mobile-nav-post" onclick="openPostModal()" title="ゲコる" style="color:var(--bg-secondary);">
+          ${ICONS.plus}
+        </button>
+        <button class="mobile-nav-item" onclick="doLogout()">
+          ${ICONS.logout}
+          ログアウト
+        </button>
+        <button class="mobile-nav-item" onclick="toggleTheme()">
+          ${themeIcon()}
+          テーマ
+        </button>
+      </div>
+    </div>
+  `;
+
+            // 投稿モーダルのアバターをセット
+            const postModalAvatar = document.getElementById('postModalAvatar');
+            if (postModalAvatar) postModalAvatar.innerHTML = avatarHtml(state.iconBase64, state.username);
+
+            // ポスト取得は後回し（UIは先に表示済み）
+            loadTimeline().then(() => {
+                renderPosts();
+                startAutoRefresh();
+            });
+        }
+
+        function renderPosts() {
+            const container = document.getElementById('timeline');
+            if (!container) return;
+            const emptyEl = document.getElementById('timelineEmpty');
+            if (state.posts.length === 0) {
+                if (emptyEl) emptyEl.style.display = 'block';
+                container.innerHTML = '';
+            } else {
+                if (emptyEl) emptyEl.style.display = 'none';
+                container.innerHTML = state.posts.map(p => postCardHtml(p)).join('');
+            }
+            const loadWrap = document.getElementById('loadMoreWrap');
+            if (loadWrap) loadWrap.style.display = state.hasMore ? 'flex' : 'none';
+        }
+
+        function postCardHtml(p) {
+            const repostLabel = p.isRepost
+                ? `<div class="post-repost-label">${ICONS.repost} <span onclick="navigateToUser('${esc(p.username)}')" style="cursor:pointer">${esc(p.username)}</span> が再ゲコ</div>`
+                : '';
+
+            const quoteBlock = (p.isQuote && p.quotedPost)
+                ? `<div class="quote-block">
+        <div class="quote-block-header">
+          <span class="quote-block-username" onclick="navigateToUser('${esc(p.quotedPost.username)}')">@${esc(p.quotedPost.username)}</span>
+          <span style="color:var(--text-muted)">${formatTime(p.quotedPost.createdAt)}</span>
+        </div>
+        <div class="quote-block-content">${esc(p.quotedPost.content)}</div>
+      </div>`
+                : (p.isQuote ? `<div class="quote-block" style="color:var(--text-muted);font-size:12px">（引用元の投稿は削除されました）</div>` : '');
+
+            const likeClass = p.likedByMe ? 'action-btn liked' : 'action-btn';
+            const likeIcon = p.likedByMe ? ICONS.heartFill : ICONS.heart;
+            const repostClass = p.repostedByMe ? 'action-btn reposted' : 'action-btn';
+
+            // 自分の投稿かつ再ゲコでない場合のみ編集ボタン表示
+            const myBtns = (p.isMyPost && !p.isRepost)
+                ? `<button class="action-btn" onclick="openEditModal('${esc(p.postId)}')" title="編集" style="color:var(--text-muted)">${ICONS.edit}</button><button class="action-btn" onclick="deletePost('${esc(p.postId)}')" title="削除" style="color:var(--text-muted)">${ICONS.trash}</button>`
+                : (p.isMyPost ? `<button class="action-btn" onclick="deletePost('${esc(p.postId)}')" title="削除" style="color:var(--text-muted)">${ICONS.trash}</button>` : '');
+
+            // 200文字以上は折りたたむ
+            const isLong = (p.content || '').length > 200;
+            const contentHtml = isLong
+                ? `<div class="post-content post-content-collapsed" id="content-${esc(p.postId)}">${esc(p.content)}</div><button class="expand-btn" id="expand-${esc(p.postId)}" onclick="toggleExpand('${esc(p.postId)}')">続きを表示 ▾</button>`
+                : `<div class="post-content">${esc(p.content)}</div>`;
+
+            return `
+    <div class="post-card" id="post-${esc(p.postId)}">
+      <div onclick="navigateToUser('${esc(p.username)}')" style="cursor:pointer">${avatarHtml(p.iconBase64, p.username)}</div>
+      <div class="post-body">
+        ${repostLabel}
+        <div class="post-header">
+          <span class="post-username" onclick="navigateToUser('${esc(p.username)}')">@${esc(p.username)}</span>
+          <span class="post-time">${formatTime(p.createdAt)}</span>
+          ${p.isEdited ? '<span style="font-size:11px;color:var(--text-muted)">(編集済み)</span>' : ''}
+        </div>
+        ${contentHtml}
+        ${quoteBlock}
+        <div class="post-actions">
+          <button class="${likeClass}" onclick="toggleLike('${esc(p.postId)}')">
+            ${likeIcon} <span class="count">${p.likeCount || 0}</span>
+          </button>
+          <button class="${repostClass}" onclick="toggleRepost('${esc(p.postId)}')">
+            ${ICONS.repost} <span class="count">${p.repostCount || 0}</span>
+          </button>
+          <button class="action-btn" onclick="openQuoteModal('${esc(p.postId)}')">
+            ${ICONS.quote}
+          </button>
+          <div style="margin-left:auto;display:flex;gap:2px">${myBtns}</div>
+        </div>
+      </div>
+    </div>
+  `;
+        }
+
+        // ============================================================
+        // 投稿モーダル
+        // ============================================================
+        function openPostModal() {
+            const modal = document.getElementById('postModal');
+            if (!modal) return;
+            const avatarEl = document.getElementById('postModalAvatar');
+            if (avatarEl) avatarEl.innerHTML = avatarHtml(state.iconBase64, state.username);
+            modal.classList.add('open');
+            document.getElementById('postContent')?.focus();
+        }
+
+        function closePostModal() {
+            document.getElementById('postModal')?.classList.remove('open');
+        }
+
+        document.getElementById('postModal')?.addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closePostModal();
+        });
+
+        function updateCharCount() {
+            const len = (document.getElementById('postContent')?.value || '').length;
+            const el = document.getElementById('charCount');
+            if (!el) return;
+            el.textContent = `${len} / ${MAX_POST_LENGTH}`;
+            el.className = 'char-count' + (len > MAX_POST_LENGTH ? ' over' : len > MAX_POST_LENGTH * 0.9 ? ' warn' : '');
+        }
+
+        function handlePostKey(e) {
+            if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) submitPost();
+        }
+
+        async function submitPost() {
+            const content = document.getElementById('postContent')?.value?.trim();
+            if (!content) { showToast('内容を入力してください', 'error'); return; }
+            if (content.length > MAX_POST_LENGTH) { showToast(`${MAX_POST_LENGTH}文字以内にしてください`, 'error'); return; }
+            const btn = document.getElementById('postBtn');
+            btn.disabled = true; btn.innerHTML = '<span class="loading-spinner"></span>';
+            try {
+                const res = await api({ action: 'post', token: state.token, content });
+                if (res.success) {
+                    const hasGeko = /ゲコ|ｹﾞｺ|げこ|けこ/i.test(content);
+                    document.getElementById('postContent').value = '';
+                    updateCharCount();
+                    closePostModal();
+                    await loadTimeline();
+                    renderPosts();
+                    if (hasGeko) showToast('ゲコ！', 'success');
+                    else showToast('投稿しました', 'success');
+                } else { showToast(res.error || '投稿に失敗しました', 'error'); }
+            } catch { showToast('サーバーエラーが発生しました', 'error'); }
+            finally { btn.disabled = false; btn.innerHTML = 'ゲコる'; }
+        }
+
+        async function toggleLike(postId) {
+            try {
+                const res = await api({ action: 'like', token: state.token, postId });
+                if (res.success) {
+                    const post = state.posts.find(p => p.postId === postId);
+                    if (post) {
+                        post.likedByMe = res.liked;
+                        post.likeCount = res.liked ? post.likeCount + 1 : Math.max(0, post.likeCount - 1);
+                        const el = document.getElementById(`post-${postId}`);
+                        if (el) el.outerHTML = postCardHtml(post);
+                    }
+                } else { showToast(res.error, 'error'); }
+            } catch { showToast('サーバーエラー', 'error'); }
+        }
+
+        async function toggleRepost(postId) {
+            try {
+                const res = await api({ action: 'repost', token: state.token, postId });
+                if (res.success) {
+                    const post = state.posts.find(p => p.postId === postId);
+                    if (post) {
+                        post.repostedByMe = res.reposted;
+                        post.repostCount = res.reposted ? post.repostCount + 1 : Math.max(0, post.repostCount - 1);
+                        const el = document.getElementById(`post-${postId}`);
+                        if (el) el.outerHTML = postCardHtml(post);
+                        if (res.reposted) { await loadTimeline(); renderPosts(); }
+                    }
+                } else { showToast(res.error, 'error'); }
+            } catch { showToast('サーバーエラー', 'error'); }
+        }
+
+        async function deletePost(postId) {
+            if (!confirm('この投稿を削除しますか？')) return;
+            try {
+                const res = await api({ action: 'deletePost', token: state.token, postId });
+                if (res.success) {
+                    const el = document.getElementById('post-' + postId);
+                    if (el) { el.style.opacity = '0'; el.style.transform = 'translateX(20px)'; el.style.transition = 'all 0.2s ease'; setTimeout(() => el.remove(), 200); }
+                    state.posts = state.posts.filter(p => p.postId !== postId);
+                    const emptyEl = document.getElementById('timelineEmpty');
+                    if (emptyEl) emptyEl.style.display = state.posts.length === 0 ? 'block' : 'none';
+                    showToast('削除しました', 'success');
+                } else { showToast(res.error, 'error'); }
+            } catch { showToast('サーバーエラー', 'error'); }
+        }
+
+        async function loadTimeline() {
+            try {
+                const res = await api({ action: 'getTimeline', token: state.token, offset: 0 });
+                if (res.success) { state.posts = res.posts; state.hasMore = res.hasMore; }
+            } catch (e) { console.error('loadTimeline error:', e); }
+        }
+
+        async function loadMore() {
+            if (state.isLoadingMore || !state.hasMore) return;
+            state.isLoadingMore = true;
+            const btn = document.querySelector('#loadMoreWrap button');
+            if (btn) { btn.disabled = true; btn.innerHTML = '<span class="loading-spinner"></span>'; }
+            try {
+                const res = await api({ action: 'getTimeline', token: state.token, offset: state.posts.length });
+                if (res.success) { state.posts = [...state.posts, ...res.posts]; state.hasMore = res.hasMore; renderPosts(); }
+            } catch { showToast('読み込みに失敗しました', 'error'); }
+            finally {
+                state.isLoadingMore = false;
+                if (btn) { btn.disabled = false; btn.textContent = 'もっと見る'; }
+            }
+        }
+
+        function startAutoRefresh() {
+            clearAutoRefresh();
+            state.autoRefreshTimer = setInterval(async () => {
+                if (state.page !== 'timeline') return;
+                try {
+                    const res = await api({ action: 'getTimeline', token: state.token, offset: 0 });
+                    if (res.success && res.posts.length > 0) {
+                        const newPosts = res.posts.filter(np => !state.posts.some(op => op.postId === np.postId));
+                        if (newPosts.length > 0) { state.posts = [...newPosts, ...state.posts]; renderPosts(); }
+                    }
+                } catch { }
+            }, AUTO_REFRESH_INTERVAL);
+        }
+
+        function clearAutoRefresh() {
+            if (state.autoRefreshTimer) { clearInterval(state.autoRefreshTimer); state.autoRefreshTimer = null; }
+        }
+
+        // インライン投稿フォーム
+        function updateInlineCharCount() {
+            const len = (document.getElementById('inlinePostContent')?.value || '').length;
+            const el = document.getElementById('inlineCharCount');
+            if (!el) return;
+            el.textContent = `${len} / ${MAX_POST_LENGTH}`;
+            el.className = 'char-count' + (len > MAX_POST_LENGTH ? ' over' : len > MAX_POST_LENGTH * 0.9 ? ' warn' : '');
+        }
+
+        function handleInlinePostKey(e) {
+            if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) submitInlinePost();
+        }
+
+        async function submitInlinePost() {
+            const content = document.getElementById('inlinePostContent')?.value?.trim();
+            if (!content) { showToast('内容を入力してください', 'error'); return; }
+            if (content.length > MAX_POST_LENGTH) { showToast(`${MAX_POST_LENGTH}文字以内にしてください`, 'error'); return; }
+            const btn = document.getElementById('inlinePostBtn');
+            btn.disabled = true; btn.innerHTML = '<span class="loading-spinner"></span>';
+            try {
+                const res = await api({ action: 'post', token: state.token, content });
+                if (res.success) {
+                    const hasGeko = /ゲコ|ｹﾞｺ|げこ|けこ/i.test(content);
+                    document.getElementById('inlinePostContent').value = '';
+                    updateInlineCharCount();
+                    await loadTimeline();
+                    renderPosts();
+                    if (hasGeko) showToast('ゲコ！', 'success');
+                    else showToast('投稿しました', 'success');
+                } else { showToast(res.error || '投稿に失敗しました', 'error'); }
+            } catch { showToast('サーバーエラーが発生しました', 'error'); }
+            finally { btn.disabled = false; btn.innerHTML = 'ゲコる'; }
+        }
+
+        async function doLogout() {
+            clearAutoRefresh();
+            // スピナー表示
+            const logoutBtns = document.querySelectorAll('.sidebar-nav-item, .mobile-nav-item');
+            logoutBtns.forEach(b => { if (b.textContent.includes('ログアウト')) { b.disabled = true; b.innerHTML = '<span class="loading-spinner"></span> ログアウト中…'; } });
+            document.getElementById('app').style.opacity = '0.5';
+            document.getElementById('app').style.pointerEvents = 'none';
+            try { await api({ action: 'logout', token: state.token }); } catch { }
+            clearSession();
+            document.getElementById('app').style.opacity = '';
+            document.getElementById('app').style.pointerEvents = '';
+            pushUrl('');
+            render('landing', false);
+            showToast('ログアウトしました');
+        }
+
+        // ============================================================
+        // 引用再ゲコ
+        // ============================================================
+        function openQuoteModal(postId) {
+            if (!state.token) { showToast('ログインが必要です', 'error'); return; }
+            // タイムラインまたはユーザーページのどちらからでも投稿を探す
+            let post = state.posts.find(p => p.postId === postId);
+            if (!post) {
+                // ユーザーページにいる場合: DOMから情報を収集して仮オブジェクト生成
+                const cardEl = document.getElementById('upost-' + postId) || document.getElementById('post-' + postId);
+                if (!cardEl) { showToast('投稿が見つかりません', 'error'); return; }
+                const usernameEl = cardEl.querySelector('.post-username');
+                const contentEl = cardEl.querySelector('.post-content');
+                const timeEl = cardEl.querySelector('.post-time');
+                post = {
+                    postId,
+                    username: usernameEl ? usernameEl.textContent.replace('@','').trim() : '?',
+                    iconBase64: '',
+                    content: contentEl ? contentEl.textContent : '',
+                    createdAt: null,
+                    _timeText: timeEl ? timeEl.textContent : '',
+                };
+            }
+            state.quotingPost = post;
+
+            const preview = document.getElementById('quotePreview');
+            const timeDisplay = post.createdAt ? formatTime(post.createdAt) : (post._timeText || '');
+            preview.innerHTML = `
+    <div class="quote-preview-header">
+      ${avatarHtml(post.iconBase64, post.username, 'sm')}
+      <span class="quote-preview-username">@${esc(post.username)}</span>
+      <span style="color:var(--text-muted);font-size:11px">${esc(timeDisplay)}</span>
+    </div>
+    <div class="quote-preview-content">${esc(post.content)}</div>
+  `;
+            document.getElementById('quoteContent').value = '';
+            document.getElementById('quoteCharCount').textContent = `0 / ${MAX_POST_LENGTH}`;
+            document.getElementById('quoteModal').classList.add('open');
+            document.getElementById('quoteContent').focus();
+        }
+
+        function closeQuoteModal() {
+            document.getElementById('quoteModal').classList.remove('open');
+            state.quotingPost = null;
+        }
+
+        document.getElementById('quoteModal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closeQuoteModal();
+        });
+
+        function updateQuoteCharCount() {
+            const len = (document.getElementById('quoteContent')?.value || '').length;
+            const el = document.getElementById('quoteCharCount');
+            if (!el) return;
+            el.textContent = `${len} / ${MAX_POST_LENGTH}`;
+            el.className = 'char-count' + (len > MAX_POST_LENGTH ? ' over' : len > MAX_POST_LENGTH * 0.9 ? ' warn' : '');
+        }
+
+        async function submitQuote() {
+            const content = document.getElementById('quoteContent')?.value?.trim();
+            if (!content) { showToast('コメントを入力してください', 'error'); return; }
+            if (content.length > MAX_POST_LENGTH) { showToast(`${MAX_POST_LENGTH}文字以内にしてください`, 'error'); return; }
+            if (!state.quotingPost) return;
+
+            const btn = document.getElementById('quoteSubmitBtn');
+            btn.disabled = true; btn.innerHTML = '<span class="loading-spinner"></span> 送信中…';
+            try {
+                const res = await api({ action: 'quotePost', token: state.token, content, quotePostId: state.quotingPost.postId });
+                if (res.success) {
+                    closeQuoteModal();
+                    await loadTimeline();
+                    renderPosts();
+                    showToast('引用再ゲコしました', 'success');
+                } else { showToast(res.error || '失敗しました', 'error'); }
+            } catch { showToast('サーバーエラー', 'error'); }
+            finally { btn.disabled = false; btn.innerHTML = '引用再ゲコ'; }
+        }
+
+        // ============================================================
+        // 続きを表示
+        // ============================================================
+        function toggleExpand(postId) {
+            const contentEl = document.getElementById('content-' + postId);
+            const btnEl = document.getElementById('expand-' + postId);
+            if (!contentEl || !btnEl) return;
+            const collapsed = contentEl.classList.contains('post-content-collapsed');
+            if (collapsed) {
+                contentEl.classList.remove('post-content-collapsed');
+                btnEl.textContent = '折りたたむ ▴';
+            } else {
+                contentEl.classList.add('post-content-collapsed');
+                btnEl.textContent = '続きを表示 ▾';
+            }
+        }
+
+        // ============================================================
+        // 投稿編集
+        // ============================================================
+        function openEditModal(postId) {
+            if (!state.token) { showToast('ログインが必要です', 'error'); return; }
+            const post = state.posts.find(p => p.postId === postId);
+            if (!post) return;
+            state.editingPost = post;
+
+            const avatarEl = document.getElementById('editModalAvatar');
+            if (avatarEl) avatarEl.innerHTML = avatarHtml(state.iconBase64, state.username);
+
+            const textarea = document.getElementById('editContent');
+            if (textarea) { textarea.value = post.content; }
+            updateEditCharCount();
+
+            document.getElementById('editModal').classList.add('open');
+            textarea?.focus();
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.remove('open');
+            state.editingPost = null;
+        }
+
+        document.getElementById('editModal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closeEditModal();
+        });
+
+        function updateEditCharCount() {
+            const len = (document.getElementById('editContent')?.value || '').length;
+            const el = document.getElementById('editCharCount');
+            if (!el) return;
+            el.textContent = `${len} / ${MAX_POST_LENGTH}`;
+            el.className = 'char-count' + (len > MAX_POST_LENGTH ? ' over' : len > MAX_POST_LENGTH * 0.9 ? ' warn' : '');
+        }
+
+        async function submitEdit() {
+            const content = document.getElementById('editContent')?.value?.trim();
+            if (!content) { showToast('内容を入力してください', 'error'); return; }
+            if (content.length > MAX_POST_LENGTH) { showToast(`${MAX_POST_LENGTH}文字以内にしてください`, 'error'); return; }
+            if (!state.editingPost) return;
+
+            const btn = document.getElementById('editBtn');
+            btn.disabled = true; btn.innerHTML = '<span class="loading-spinner"></span> 保存中…';
+            try {
+                const res = await api({ action: 'editPost', token: state.token, postId: state.editingPost.postId, content });
+                if (res.success) {
+                    const editedId = state.editingPost.postId;
+                    // タイムラインのstateを更新
+                    const post = state.posts.find(p => p.postId === editedId);
+                    if (post) {
+                        post.content = content;
+                        post.isEdited = true;
+                        const el = document.getElementById('post-' + editedId);
+                        if (el) el.outerHTML = postCardHtml(post);
+                    }
+                    // ユーザーページのカードを更新（DOMのみ）
+                    const uEl = document.getElementById('upost-' + editedId);
+                    if (uEl) {
+                        const contentEl = uEl.querySelector('.post-content');
+                        if (contentEl) {
+                            contentEl.textContent = content;
+                            contentEl.classList.remove('post-content-collapsed');
+                        }
+                        // 編集済みバッジ追加
+                        const header = uEl.querySelector('.post-header');
+                        if (header && !header.querySelector('.edited-badge')) {
+                            const badge = document.createElement('span');
+                            badge.className = 'edited-badge';
+                            badge.style.cssText = 'font-size:11px;color:var(--text-muted)';
+                            badge.textContent = '(編集済み)';
+                            header.appendChild(badge);
+                        }
+                        // expand button を除去（内容が短くなった可能性）
+                        const expandBtn = document.getElementById('expand-u' + editedId);
+                        if (expandBtn && content.length <= 200) expandBtn.remove();
+                    }
+                    closeEditModal();
+                    showToast('編集しました', 'success');
+                } else { showToast(res.error || '編集に失敗しました', 'error'); }
+            } catch { showToast('サーバーエラー', 'error'); }
+            finally { btn.disabled = false; btn.innerHTML = '保存する'; }
+        }
+
+        // ============================================================
+        // ユーザープロフィールページ
+        // ============================================================
+        async function renderUserProfilePage(username, updateUrl = true) {
+            state.page = 'user';
+            clearAutoRefresh();
+            if (updateUrl) pushUrl('user', { user: username });
+
+            const isMe = state.token && state.username === username;
+
+            document.getElementById('app').innerHTML = `
+    <div class="app-layout">
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <div class="sidebar-logo" onclick="backToTimeline()">
+            <div style="width:28px;height:28px">${ICONS.frog}</div>
+            ゲコランド
+          </div>
+        </div>
+        <nav class="sidebar-nav">
+          <button class="sidebar-nav-item" onclick="backToTimeline()">
+            ${ICONS.home} ホーム
+          </button>
+          <button class="sidebar-nav-item ${isMe ? 'active' : ''}" onclick="navigateToUser('${esc(state.username || username)}')">
+            ${ICONS.user} プロフィール
+          </button>
+          ${state.token ? `<button class="sidebar-nav-item" onclick="doLogout()">${ICONS.logout} ログアウト</button>` : ''}
+        </nav>
+        ${state.token ? `
+        <button class="sidebar-post-btn" onclick="openPostModal()">
+          ${ICONS.plus} ゲコる
+        </button>` : ''}
+        ${state.token ? `
+        <div class="sidebar-user" onclick="navigateToUser('${esc(state.username)}')">
+          ${avatarHtml(state.iconBase64, state.username)}
+          <div class="sidebar-user-info">
+            <div class="sidebar-user-name">${esc(state.username)}</div>
+            <div class="sidebar-user-handle">@${esc(state.username)}</div>
+          </div>
+          <button class="theme-btn" onclick="event.stopPropagation();toggleTheme()">${themeIcon()}</button>
+        </div>` : ''}
+      </aside>
+
+      <div class="main-area">
+        <div class="mobile-topbar">
+          <div class="mobile-topbar-logo" onclick="backToTimeline()">
+            <div style="width:26px;height:26px">${ICONS.frog}</div>
+            ゲコランド
+          </div>
+          <div class="mobile-topbar-actions">
+            <button class="theme-btn" onclick="toggleTheme()">${themeIcon()}</button>
+            ${state.token ? '' : `<button class="btn btn-primary btn-sm" onclick="render('login')">ログイン</button>`}
+          </div>
+        </div>
+
+        <div class="main-content">
+          <div class="feed-header" style="display:flex;align-items:center;gap:10px">
+            <button class="btn btn-ghost btn-sm" onclick="backToTimeline()" style="padding:6px">
+              ${ICONS.arrowLeft}
+            </button>
+            <div class="feed-header-title">プロフィール</div>
+          </div>
+          <div class="user-profile-header" id="profileHeader">
+            <span class="loading-spinner lg"></span>
+          </div>
+          <div id="userPostsSection">
+            <div style="text-align:center;padding:32px"><span class="loading-spinner lg"></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-bottom-nav">
+      <div class="mobile-bottom-nav-inner">
+        <button class="mobile-nav-item" onclick="backToTimeline()">
+          ${ICONS.home} ホーム
+        </button>
+        <button class="mobile-nav-item active">
+          ${ICONS.user} プロフィール
+        </button>
+        ${state.token ? `<button class="mobile-nav-post" onclick="openPostModal()">${ICONS.plus}</button>` : ''}
+        ${state.token ? `<button class="mobile-nav-item" onclick="doLogout()">${ICONS.logout} ログアウト</button>` : ''}
+        <button class="mobile-nav-item" onclick="toggleTheme()">${themeIcon()} テーマ</button>
+      </div>
+    </div>
+  `;
+
+            try {
+                const profileRes = await api({ action: 'getUserProfile', username });
+                const headerEl = document.getElementById('profileHeader');
+                if (!profileRes.success) {
+                    headerEl.innerHTML = `<p style="color:var(--danger)">${esc(profileRes.error)}</p>`;
+                    return;
+                }
+                const u = profileRes;
+                const joinDate = u.createdAt ? new Date(u.createdAt).toLocaleDateString('ja-JP') : '';
+
+                headerEl.innerHTML = `
+      ${avatarHtml(u.iconBase64, u.username, 'lg')}
+      <div>
+        <div class="user-profile-name">${esc(u.username)}</div>
+        <div class="user-profile-handle">@${esc(u.username)}</div>
+      </div>
+      ${u.bio ? `<div class="user-profile-bio">${esc(u.bio)}</div>` : '<div class="user-profile-bio" style="color:var(--text-muted)">自己紹介なし</div>'}
+      ${joinDate ? `<div class="user-profile-meta">${ICONS.calendar} ${joinDate} からゲコっている</div>` : ''}
+      <div class="user-profile-actions">
+        ${isMe ? `<button class="btn btn-primary btn-sm" onclick="render('profile-edit')">${ICONS.edit} プロフィールを編集</button>` : ''}
+        <button class="btn btn-secondary btn-sm" onclick="backToTimeline()">${ICONS.arrowLeft} タイムラインへ</button>
+      </div>
+    `;
+
+                const postsRes = await api({ action: 'getUserPosts', username, token: state.token || '' });
+                const postsSection = document.getElementById('userPostsSection');
+                if (!postsRes.success) {
+                    postsSection.innerHTML = `<p style="color:var(--danger);text-align:center">${esc(postsRes.error)}</p>`;
+                    return;
+                }
+
+                if (postsRes.posts.length === 0) {
+                    postsSection.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">🐸</div>
+          <p>まだ投稿がありません</p>
+        </div>`;
+                } else {
+                    postsSection.innerHTML = postsRes.posts.map(p => userPagePostCardHtml(p)).join('');
+                }
+
+                if (postsRes.hasMore) {
+                    postsSection.insertAdjacentHTML('beforeend', `
+        <div class="load-more-wrap">
+          <button class="btn btn-secondary" onclick="loadMoreUserPosts('${esc(username)}', ${postsRes.posts.length})">もっと見る</button>
+        </div>
+      `);
+                }
+
+            } catch (e) {
+                document.getElementById('profileHeader').innerHTML = '<p style="color:var(--danger)">読み込みに失敗しました</p>';
+                console.error(e);
+            }
+        }
+
+        function userPagePostCardHtml(p) {
+            const quoteBlock = (p.isQuote && p.quotedPost)
+                ? `<div class="quote-block">
+        <div class="quote-block-header">
+          <span class="quote-block-username" onclick="navigateToUser('${esc(p.quotedPost.username)}')">@${esc(p.quotedPost.username)}</span>
+          <span style="color:var(--text-muted)">${formatTime(p.quotedPost.createdAt)}</span>
+        </div>
+        <div class="quote-block-content">${esc(p.quotedPost.content)}</div>
+      </div>`
+                : (p.isQuote ? `<div class="quote-block" style="color:var(--text-muted);font-size:12px">（引用元は削除済み）</div>` : '');
+
+            const likeClass = p.likedByMe ? 'action-btn liked' : 'action-btn';
+            const likeIcon = p.likedByMe ? ICONS.heartFill : ICONS.heart;
+            const myBtns = (p.isMyPost && !p.isRepost)
+                ? `<button class="action-btn" onclick="openEditModalFromUserPage('${esc(p.postId)}')" title="編集" style="color:var(--text-muted)">${ICONS.edit}</button><button class="action-btn" onclick="deletePostFromUserPage('${esc(p.postId)}')" title="削除" style="color:var(--text-muted)">${ICONS.trash}</button>`
+                : (p.isMyPost ? `<button class="action-btn" onclick="deletePostFromUserPage('${esc(p.postId)}')" title="削除" style="color:var(--text-muted)">${ICONS.trash}</button>` : '');
+
+            // 200文字以上は折りたたむ
+            const isLong = (p.content || '').length > 200;
+            const contentHtml = isLong
+                ? `<div class="post-content post-content-collapsed" id="content-u${esc(p.postId)}">${esc(p.content)}</div><button class="expand-btn" id="expand-u${esc(p.postId)}" onclick="toggleExpandU('${esc(p.postId)}')">続きを表示 ▾</button>`
+                : `<div class="post-content">${esc(p.content)}</div>`;
+
+            return `
+    <div class="post-card" id="upost-${esc(p.postId)}">
+      <div class="post-body">
+        <div class="post-header">
+          <span class="post-time">${formatTime(p.createdAt)}</span>
+          ${p.isQuote ? `<span style="font-size:11px;color:var(--quote-color);display:flex;align-items:center;gap:4px;width:37px;">${ICONS.quote} 引用再ゲコ</span>` : ''}
+          ${p.isEdited ? '<span style="font-size:11px;color:var(--text-muted)">(編集済み)</span>' : ''}
+        </div>
+        ${contentHtml}
+        ${quoteBlock}
+        <div class="post-actions">
+          <button class="${likeClass}" onclick="toggleLikeOnUserPage('${esc(p.postId)}', this)">
+            ${likeIcon} <span class="count">${p.likeCount || 0}</span>
+          </button>
+          ${state.token ? `<button class="action-btn" onclick="openQuoteModal('${esc(p.postId)}')">${ICONS.quote}</button>` : ''}
+          <div style="margin-left:auto;display:flex;gap:2px">${myBtns}</div>
+        </div>
+      </div>
+    </div>
+  `;
+        }
+
+        function toggleExpandU(postId) {
+            const contentEl = document.getElementById('content-u' + postId);
+            const btnEl = document.getElementById('expand-u' + postId);
+            if (!contentEl || !btnEl) return;
+            const collapsed = contentEl.classList.contains('post-content-collapsed');
+            if (collapsed) {
+                contentEl.classList.remove('post-content-collapsed');
+                btnEl.textContent = '折りたたむ ▴';
+            } else {
+                contentEl.classList.add('post-content-collapsed');
+                btnEl.textContent = '続きを表示 ▾';
+            }
+        }
+
+        function openEditModalFromUserPage(postId) {
+            if (!state.token) { showToast('ログインが必要です', 'error'); return; }
+            // ユーザーページ上の投稿をDOMから読み取り仮オブジェクト生成
+            const cardEl = document.getElementById('upost-' + postId);
+            if (!cardEl) return;
+            const contentEl = cardEl.querySelector('.post-content');
+            const post = {
+                postId,
+                username: state.username,
+                content: contentEl ? contentEl.textContent : '',
+            };
+            state.editingPost = post;
+
+            const avatarEl = document.getElementById('editModalAvatar');
+            if (avatarEl) avatarEl.innerHTML = avatarHtml(state.iconBase64, state.username);
+
+            const textarea = document.getElementById('editContent');
+            if (textarea) textarea.value = post.content;
+            updateEditCharCount();
+
+            document.getElementById('editModal').classList.add('open');
+            textarea?.focus();
+        }
+
+        async function toggleLikeOnUserPage(postId, btn) {
+            if (!state.token) { showToast('ログインが必要です', 'error'); return; }
+            try {
+                const res = await api({ action: 'like', token: state.token, postId });
+                if (res.success) {
+                    const countEl = btn.querySelector('.count');
+                    const cur = parseInt(countEl.textContent) || 0;
+                    if (res.liked) {
+                        btn.classList.add('liked');
+                        btn.innerHTML = `${ICONS.heartFill} <span class="count">${cur + 1}</span>`;
+                    } else {
+                        btn.classList.remove('liked');
+                        btn.innerHTML = `${ICONS.heart} <span class="count">${Math.max(0, cur - 1)}</span>`;
+                    }
+                } else { showToast(res.error, 'error'); }
+            } catch { showToast('サーバーエラー', 'error'); }
+        }
+
+        async function deletePostFromUserPage(postId) {
+            if (!confirm('この投稿を削除しますか？')) return;
+            try {
+                const res = await api({ action: 'deletePost', token: state.token, postId });
+                if (res.success) {
+                    const el = document.getElementById('upost-' + postId);
+                    if (el) { el.style.opacity = '0'; el.style.transition = 'opacity 0.2s'; setTimeout(() => el.remove(), 200); }
+                    showToast('削除しました', 'success');
+                } else { showToast(res.error, 'error'); }
+            } catch { showToast('サーバーエラー', 'error'); }
+        }
+
+        async function loadMoreUserPosts(username, offset) {
+            const btn = event.target;
+            btn.disabled = true; btn.innerHTML = '<span class="loading-spinner"></span>';
+            try {
+                const res = await api({ action: 'getUserPosts', username, token: state.token || '', offset });
+                if (res.success) {
+                    const wrap = btn.closest('.load-more-wrap');
+                    res.posts.forEach(p => wrap.insertAdjacentHTML('beforebegin', userPagePostCardHtml(p)));
+                    if (res.hasMore) {
+                        btn.disabled = false; btn.textContent = 'もっと見る';
+                        btn.setAttribute('onclick', `loadMoreUserPosts('${esc(username)}', ${offset + res.posts.length})`);
+                    } else {
+                        wrap.remove();
+                    }
+                }
+            } catch { showToast('読み込みに失敗しました', 'error'); btn.disabled = false; btn.textContent = 'もっと見る'; }
+        }
+
+        // ============================================================
+        // プロフィール編集ページ
+        // ============================================================
+        async function renderProfileEditPage(updateUrl = true) {
+            state.page = 'profile-edit';
+            clearAutoRefresh();
+            if (updateUrl) pushUrl('profile-edit');
+
+            document.getElementById('app').innerHTML = `
+    <div class="app-layout">
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <div class="sidebar-logo" onclick="backToTimeline()">
+            <div style="width:28px;height:28px">${ICONS.frog}</div>
+            ゲコランド
+          </div>
+        </div>
+        <nav class="sidebar-nav">
+          <button class="sidebar-nav-item" onclick="backToTimeline()">
+            ${ICONS.home} ホーム
+          </button>
+          <button class="sidebar-nav-item active" onclick="navigateToUser('${esc(state.username)}')">
+            ${ICONS.user} プロフィール
+          </button>
+          <button class="sidebar-nav-item" onclick="doLogout()">
+            ${ICONS.logout} ログアウト
+          </button>
+        </nav>
+        <button class="sidebar-post-btn" onclick="openPostModal()">
+          ${ICONS.plus} ゲコる
+        </button>
+        <div class="sidebar-user" onclick="navigateToUser('${esc(state.username)}')">
+          ${avatarHtml(state.iconBase64, state.username)}
+          <div class="sidebar-user-info">
+            <div class="sidebar-user-name">${esc(state.username)}</div>
+            <div class="sidebar-user-handle">@${esc(state.username)}</div>
+          </div>
+          <button class="theme-btn" onclick="event.stopPropagation();toggleTheme()">${themeIcon()}</button>
+        </div>
+      </aside>
+
+      <div class="main-area">
+        <div class="mobile-topbar">
+          <div class="mobile-topbar-logo" onclick="backToTimeline()">
+            <div style="width:26px;height:26px">${ICONS.frog}</div>
+            ゲコランド
+          </div>
+          <div class="mobile-topbar-actions">
+            <button class="theme-btn" onclick="toggleTheme()">${themeIcon()}</button>
+          </div>
+        </div>
+
+        <div class="main-content">
+          <div class="feed-header" style="display:flex;align-items:center;gap:10px">
+            <button class="btn btn-ghost btn-sm" onclick="navigateToUser('${esc(state.username)}')" style="padding:6px">
+              ${ICONS.arrowLeft}
+            </button>
+            <div class="feed-header-title">プロフィールを編集</div>
+          </div>
+
+          <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px" class="profile-page" id="profileCard">
+            <div class="profile-icon-wrap">
+              <div style="position:relative">
+                <div id="profileIconPreview">${avatarHtml(state.iconBase64, state.username, 'lg')}</div>
+              </div>
+              <label class="btn btn-secondary btn-sm icon-upload-btn">
+                ${ICONS.camera} アイコンを変更
+                <input type="file" accept="image/*" onchange="handleIconUpload(event)">
+              </label>
+              <span style="font-size:11px;color:var(--text-muted)">最大500KB・自動リサイズ</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label">ユーザー名</label>
+              <input class="input-field" type="text" value="@${esc(state.username)}" disabled style="opacity:0.5">
+            </div>
+            <div class="form-group">
+              <label class="form-label">自己紹介（200文字以内）</label>
+              <textarea class="input-field" id="bioInput" rows="4" maxlength="200" placeholder="自己紹介を入力..." style="resize:none">${esc(state.bio)}</textarea>
+            </div>
+            <div id="profileError" class="form-error" style="display:none">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <span></span>
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px">
+              <button class="btn btn-primary" onclick="saveProfile()">保存する</button>
+              <button class="btn btn-secondary" onclick="navigateToUser('${esc(state.username)}')">${ICONS.arrowLeft} プロフィールに戻る</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+            try {
+                const res = await api({ action: 'getProfile', token: state.token });
+                if (res.success) {
+                    state.bio = res.bio;
+                    const bioInput = document.getElementById('bioInput');
+                    if (bioInput) bioInput.value = res.bio;
+                    if (res.iconBase64) {
+                        state.iconBase64 = res.iconBase64;
+                        localStorage.setItem('geko_icon', res.iconBase64);
+                        const prev = document.getElementById('profileIconPreview');
+                        if (prev) prev.innerHTML = avatarHtml(res.iconBase64, state.username, 'lg');
+                    }
+                }
+            } catch { }
+        }
+
+        let pendingIcon = null;
+
+        function handleIconUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            if (!file.type.startsWith('image/')) { showToast('画像ファイルを選択してください', 'error'); return; }
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const SIZE = 96;
+                    canvas.width = SIZE; canvas.height = SIZE;
+                    const ctx = canvas.getContext('2d');
+                    const scale = Math.max(SIZE / img.width, SIZE / img.height);
+                    const sw = SIZE / scale, sh = SIZE / scale;
+                    const sx = (img.width - sw) / 2, sy = (img.height - sh) / 2;
+                    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, SIZE, SIZE);
+                    const b64 = canvas.toDataURL('image/jpeg', 0.6);
+                    if (b64.length > 20000) { showToast('画像が大きすぎます。別の画像を試してください', 'error'); return; }
+                    pendingIcon = b64;
+                    const prev = document.getElementById('profileIconPreview');
+                    if (prev) prev.innerHTML = `<img class="avatar avatar-lg" src="${b64}" alt="プレビュー">`;
+                };
+                img.src = ev.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function saveProfile() {
+            const bio = document.getElementById('bioInput')?.value || '';
+            const errEl = document.getElementById('profileError');
+            if (errEl) { errEl.style.display = 'none'; }
+
+            const saveBtn = document.querySelector('.profile-page .btn-primary');
+            const origLabel = '保存する';
+            if (saveBtn) { saveBtn.disabled = true; saveBtn.innerHTML = '<span class="loading-spinner"></span> 保存中…'; }
+            let succeeded = false;
+            try {
+                const bioRes = await api({ action: 'updateProfile', token: state.token, bio });
+                if (!bioRes.success) {
+                    if (errEl) { errEl.querySelector('span').textContent = bioRes.error; errEl.style.display = 'flex'; }
+                    return;
+                }
+                state.bio = bio;
+                if (pendingIcon) {
+                    const iconRes = await api({ action: 'updateProfile', token: state.token, bio: '', iconBase64: pendingIcon });
+                    if (!iconRes.success) {
+                        if (errEl) { errEl.querySelector('span').textContent = iconRes.error; errEl.style.display = 'flex'; }
+                        return;
+                    }
+                    state.iconBase64 = pendingIcon;
+                    localStorage.setItem('geko_icon', pendingIcon);
+                    pendingIcon = null;
+                }
+                succeeded = true;
+                if (saveBtn) {
+                    saveBtn.innerHTML = '✅ 変更しました！';
+                    saveBtn.style.background = '#4ade80';
+                    saveBtn.style.color = '#0f1a12';
+                }
+                showToast('プロフィールを変更しました', 'success');
+            } catch {
+                if (errEl) { errEl.querySelector('span').textContent = 'サーバーエラーが発生しました'; errEl.style.display = 'flex'; }
+            } finally {
+                if (succeeded) {
+                    setTimeout(() => {
+                        if (saveBtn) { saveBtn.innerHTML = origLabel; saveBtn.style.background = ''; saveBtn.style.color = ''; saveBtn.disabled = false; }
+                    }, 2000);
+                } else {
+                    if (saveBtn) { saveBtn.disabled = false; saveBtn.innerHTML = origLabel; saveBtn.style.background = ''; saveBtn.style.color = ''; }
+                }
+            }
+        }
+
+        // ============================================================
+        // 起動処理
+        // ============================================================
+        async function init() {
+            initTheme();
+
+            if (state.token) {
+                try {
+                    const res = await api({ action: 'checkToken', token: state.token });
+                    if (res.success) {
+                        state.username = res.username;
+                        state.iconBase64 = res.iconBase64 || state.iconBase64;
+                        state.bio = res.bio || '';
+                        localStorage.setItem('geko_username', res.username);
+                        const { page, user } = getUrlParams();
+                        if (page || user) {
+                            await dispatchPage(page, user);
+                        } else {
+                            await renderTimeline(false); // renderTimeline内で非同期にloadTimeline
+                        }
+                        return;
+                    }
+                } catch { }
+                clearSession();
+            }
+
+            const { page, user } = getUrlParams();
+            if (page === 'login') { render('login', false); return; }
+            if (page === 'register') { render('register', false); return; }
+            if (page === 'user' && user) { await renderUserProfilePage(user, false); return; }
+
+            render('landing', false);
+        }
+
+        init();
+    </script>
+</body>
+
+</html>
