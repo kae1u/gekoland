@@ -1093,6 +1093,19 @@
             white-space: pre-wrap;
         }
 
+        .post-content a,
+        .quote-preview-content a {
+            color: var(--accent);
+            text-decoration: underline;
+            text-decoration-color: transparent;
+            transition: text-decoration-color var(--transition);
+        }
+
+        .post-content a:hover,
+        .quote-preview-content a:hover {
+            text-decoration-color: var(--accent);
+        }
+
         .post-actions {
             display: flex;
             gap: 2px;
@@ -1801,12 +1814,13 @@
             calendar: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
             arrowLeft: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>`,
             camera: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>`,
+            refresh: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>`,
         };
 
         // ============================================================
         // 設定
         // ============================================================
-        const GAS_URL = 'https://script.google.com/macros/s/AKfycbxj48ntzBC93jDTTnIH24jUnwMJJebUwOQzQzRO1RDuOlOpSSZFvV5eUqdnzmBnkZuK/exec';
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycbxFgcUDKby6DRV9nvWDk9FlehLkw8mFBy7UxrQ9MFbvBbj26yoHosMZZJygrC5m6Wna/exec';
         const MAX_POST_LENGTH = 500;
         const AUTO_REFRESH_INTERVAL = 10000;
 
@@ -1817,6 +1831,7 @@
             token: localStorage.getItem('geko_token') || null,
             userId: localStorage.getItem('geko_userId') || null,
             username: localStorage.getItem('geko_username') || null,
+            displayName: localStorage.getItem('geko_displayName') || null,
             iconBase64: localStorage.getItem('geko_icon') || null,
             bio: '',
             posts: [],
@@ -1857,6 +1872,12 @@
             return String(str ?? '')
                 .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
                 .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+
+        function linkify(escapedStr) {
+            return String(escapedStr ?? '').replace(/(https?:\/\/[^\s<]+[^\s<.,;:!?)\]'"]|https?:\/\/[^\s<]+)/g, (url) => {
+                return `<a href="${url}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${url}</a>`;
+            });
         }
 
         function formatTime(isoStr) {
@@ -1905,7 +1926,7 @@
             document.documentElement.setAttribute('data-theme', next);
             localStorage.setItem('geko_theme', next);
             // テーマボタン全更新
-            document.querySelectorAll('.theme-btn').forEach(btn => {
+            document.querySelectorAll('.theme-btn:not(.refresh-btn)').forEach(btn => {
                 btn.innerHTML = next === 'dark' ? ICONS.sun : ICONS.moon;
                 btn.title = next === 'dark' ? 'ライトモードに切り替え' : 'ダークモードに切り替え';
             });
@@ -1918,21 +1939,25 @@
         // ============================================================
         // セッション管理
         // ============================================================
-        function saveSession(token, userId, username, icon = '') {
+        function saveSession(token, userId, username, icon = '', displayName = '') {
             state.token = token; state.userId = userId;
             state.username = username; state.iconBase64 = icon;
+            state.displayName = displayName || username;
             localStorage.setItem('geko_token', token);
             localStorage.setItem('geko_userId', userId);
             localStorage.setItem('geko_username', username);
+            localStorage.setItem('geko_displayName', displayName || username);
             if (icon) localStorage.setItem('geko_icon', icon);
         }
 
         function clearSession() {
             state.token = null; state.userId = null;
             state.username = null; state.iconBase64 = null;
+            state.displayName = null;
             localStorage.removeItem('geko_token');
             localStorage.removeItem('geko_userId');
             localStorage.removeItem('geko_username');
+            localStorage.removeItem('geko_displayName');
             localStorage.removeItem('geko_icon');
         }
 
@@ -2109,13 +2134,17 @@
             try {
                 const res = await api({ action: 'login', username, password });
                 if (res.success) {
-                    saveSession(res.token, res.userId, res.username);
+                    saveSession(res.token, res.userId, res.username, '', res.displayName || res.username);
                     // アイコンをログイン直後に取得してからタイムライン描画
                     try {
                         const profileRes = await api({ action: 'checkToken', token: res.token });
-                        if (profileRes.success && profileRes.iconBase64) {
-                            state.iconBase64 = profileRes.iconBase64;
-                            localStorage.setItem('geko_icon', profileRes.iconBase64);
+                        if (profileRes.success) {
+                            if (profileRes.iconBase64) {
+                                state.iconBase64 = profileRes.iconBase64;
+                                localStorage.setItem('geko_icon', profileRes.iconBase64);
+                            }
+                            state.displayName = profileRes.displayName || profileRes.username;
+                            localStorage.setItem('geko_displayName', state.displayName);
                         }
                     } catch { }
                     await loadTimeline();
@@ -2205,7 +2234,7 @@
             try {
                 const res = await api({ action: 'register', username, password, inviteCode });
                 if (res.success) {
-                    saveSession(res.token, res.userId, res.username);
+                    saveSession(res.token, res.userId, res.username, '', res.displayName || res.username);
                     await loadTimeline();
                     pushUrl('');
                     await renderTimeline(false);
@@ -2257,7 +2286,7 @@
         <div class="sidebar-user" onclick="navigateToUser('${esc(state.username)}')">
           ${avatarHtml(state.iconBase64, state.username)}
           <div class="sidebar-user-info">
-            <div class="sidebar-user-name">${esc(state.username)}</div>
+            <div class="sidebar-user-name">${esc(state.displayName || state.username)}</div>
             <div class="sidebar-user-handle">@${esc(state.username)}</div>
           </div>
           <button class="theme-btn" onclick="event.stopPropagation();toggleTheme()" title="テーマ切り替え">${themeIcon()}</button>
@@ -2273,7 +2302,7 @@
             ゲコランド
           </div>
           <div class="mobile-topbar-actions">
-            <button class="theme-btn" onclick="toggleTheme()">${themeIcon()}</button>
+            <button class="theme-btn refresh-btn" onclick="location.reload()" title="更新">${ICONS.refresh}</button>
           </div>
         </div>
 
@@ -2361,7 +2390,7 @@
 
         function postCardHtml(p) {
             const repostLabel = p.isRepost
-                ? `<div class="post-repost-label">${ICONS.repost} <span onclick="navigateToUser('${esc(p.username)}')" style="cursor:pointer">${esc(p.username)}</span> が再ゲコ</div>`
+                ? `<div class="post-repost-label">${ICONS.repost} <span onclick="navigateToUser('${esc(p.username)}')" style="cursor:pointer">${esc(p.displayName || p.username)}</span> が再ゲコ</div>`
                 : '';
 
             const quoteBlock = (p.isQuote && p.quotedPost)
@@ -2386,8 +2415,8 @@
             // 200文字以上は折りたたむ
             const isLong = (p.content || '').length > 200;
             const contentHtml = isLong
-                ? `<div class="post-content post-content-collapsed" id="content-${esc(p.postId)}">${esc(p.content)}</div><button class="expand-btn" id="expand-${esc(p.postId)}" onclick="toggleExpand('${esc(p.postId)}')">続きを表示 ▾</button>`
-                : `<div class="post-content">${esc(p.content)}</div>`;
+                ? `<div class="post-content post-content-collapsed" id="content-${esc(p.postId)}">${linkify(esc(p.content))}</div><button class="expand-btn" id="expand-${esc(p.postId)}" onclick="toggleExpand('${esc(p.postId)}')">続きを表示 ▾</button>`
+                : `<div class="post-content">${linkify(esc(p.content))}</div>`;
 
             return `
     <div class="post-card" id="post-${esc(p.postId)}">
@@ -2395,7 +2424,7 @@
       <div class="post-body">
         ${repostLabel}
         <div class="post-header">
-          <span class="post-username" onclick="navigateToUser('${esc(p.username)}')">@${esc(p.username)}</span>
+          <span class="post-username" onclick="navigateToUser('${esc(p.username)}')"><strong style="color:var(--text-primary)">${esc(p.displayName || p.username)}</strong> <span style="color:var(--text-muted);font-size:12px;font-weight:400">@${esc(p.username)}</span></span>
           <span class="post-time">${formatTime(p.createdAt)}</span>
           ${p.isEdited ? '<span style="font-size:11px;color:var(--text-muted)">(編集済み)</span>' : ''}
         </div>
@@ -2637,7 +2666,7 @@
                 const timeEl = cardEl.querySelector('.post-time');
                 post = {
                     postId,
-                    username: usernameEl ? usernameEl.textContent.replace('@','').trim() : '?',
+                    username: usernameEl ? (usernameEl.querySelector('span')?.textContent.replace('@','').trim() || usernameEl.textContent.replace('@','').trim()) : '?',
                     iconBase64: '',
                     content: contentEl ? contentEl.textContent : '',
                     createdAt: null,
@@ -2654,7 +2683,7 @@
       <span class="quote-preview-username">@${esc(post.username)}</span>
       <span style="color:var(--text-muted);font-size:11px">${esc(timeDisplay)}</span>
     </div>
-    <div class="quote-preview-content">${esc(post.content)}</div>
+    <div class="quote-preview-content">${linkify(esc(post.content))}</div>
   `;
             document.getElementById('quoteContent').value = '';
             document.getElementById('quoteCharCount').textContent = `0 / ${MAX_POST_LENGTH}`;
@@ -2837,7 +2866,7 @@
         <div class="sidebar-user" onclick="navigateToUser('${esc(state.username)}')">
           ${avatarHtml(state.iconBase64, state.username)}
           <div class="sidebar-user-info">
-            <div class="sidebar-user-name">${esc(state.username)}</div>
+            <div class="sidebar-user-name">${esc(state.displayName || state.username)}</div>
             <div class="sidebar-user-handle">@${esc(state.username)}</div>
           </div>
           <button class="theme-btn" onclick="event.stopPropagation();toggleTheme()">${themeIcon()}</button>
@@ -2851,7 +2880,7 @@
             ゲコランド
           </div>
           <div class="mobile-topbar-actions">
-            <button class="theme-btn" onclick="toggleTheme()">${themeIcon()}</button>
+            <button class="theme-btn refresh-btn" onclick="location.reload()" title="更新">${ICONS.refresh}</button>
             ${state.token ? '' : `<button class="btn btn-primary btn-sm" onclick="render('login')">ログイン</button>`}
           </div>
         </div>
@@ -2901,7 +2930,7 @@
                 headerEl.innerHTML = `
       ${avatarHtml(u.iconBase64, u.username, 'lg')}
       <div>
-        <div class="user-profile-name">${esc(u.username)}</div>
+        <div class="user-profile-name">${esc(u.displayName || u.username)}</div>
         <div class="user-profile-handle">@${esc(u.username)}</div>
       </div>
       ${u.bio ? `<div class="user-profile-bio">${esc(u.bio)}</div>` : '<div class="user-profile-bio" style="color:var(--text-muted)">自己紹介なし</div>'}
@@ -2962,13 +2991,15 @@
             // 200文字以上は折りたたむ
             const isLong = (p.content || '').length > 200;
             const contentHtml = isLong
-                ? `<div class="post-content post-content-collapsed" id="content-u${esc(p.postId)}">${esc(p.content)}</div><button class="expand-btn" id="expand-u${esc(p.postId)}" onclick="toggleExpandU('${esc(p.postId)}')">続きを表示 ▾</button>`
-                : `<div class="post-content">${esc(p.content)}</div>`;
+                ? `<div class="post-content post-content-collapsed" id="content-u${esc(p.postId)}">${linkify(esc(p.content))}</div><button class="expand-btn" id="expand-u${esc(p.postId)}" onclick="toggleExpandU('${esc(p.postId)}')">続きを表示 ▾</button>`
+                : `<div class="post-content">${linkify(esc(p.content))}</div>`;
 
             return `
     <div class="post-card" id="upost-${esc(p.postId)}">
+      <div onclick="navigateToUser('${esc(p.username)}')" style="cursor:pointer">${avatarHtml(p.iconBase64, p.username)}</div>
       <div class="post-body">
         <div class="post-header">
+          <span class="post-username" onclick="navigateToUser('${esc(p.username)}')"><strong style="color:var(--text-primary)">${esc(p.displayName || p.username)}</strong> <span style="color:var(--text-muted);font-size:12px;font-weight:400">@${esc(p.username)}</span></span>
           <span class="post-time">${formatTime(p.createdAt)}</span>
           ${p.isEdited ? '<span style="font-size:11px;color:var(--text-muted)">(編集済み)</span>' : ''}
         </div>
@@ -3110,7 +3141,7 @@
         <div class="sidebar-user" onclick="navigateToUser('${esc(state.username)}')">
           ${avatarHtml(state.iconBase64, state.username)}
           <div class="sidebar-user-info">
-            <div class="sidebar-user-name">${esc(state.username)}</div>
+            <div class="sidebar-user-name">${esc(state.displayName || state.username)}</div>
             <div class="sidebar-user-handle">@${esc(state.username)}</div>
           </div>
           <button class="theme-btn" onclick="event.stopPropagation();toggleTheme()">${themeIcon()}</button>
@@ -3124,7 +3155,7 @@
             ゲコランド
           </div>
           <div class="mobile-topbar-actions">
-            <button class="theme-btn" onclick="toggleTheme()">${themeIcon()}</button>
+            <button class="theme-btn refresh-btn" onclick="location.reload()" title="更新">${ICONS.refresh}</button>
           </div>
         </div>
 
@@ -3148,8 +3179,13 @@
               <span style="font-size:11px;color:var(--text-muted)">最大500KB・自動リサイズ</span>
             </div>
             <div class="form-group">
-              <label class="form-label">ユーザー名</label>
+              <label class="form-label">ユーザーID（変更不可）</label>
               <input class="input-field" type="text" value="@${esc(state.username)}" disabled style="opacity:0.5">
+            </div>
+            <div class="form-group">
+              <label class="form-label">表示名（30文字以内）</label>
+              <input class="input-field" type="text" id="displayNameInput" maxlength="30" placeholder="表示名を入力…" value="${esc(state.displayName || state.username)}">
+              <span style="font-size:11px;color:var(--text-muted)">投稿やプロフィールに表示される名前です</span>
             </div>
             <div class="form-group">
               <label class="form-label">自己紹介（200文字以内）</label>
@@ -3216,20 +3252,27 @@
 
         async function saveProfile() {
             const bio = document.getElementById('bioInput')?.value || '';
+            const displayName = document.getElementById('displayNameInput')?.value?.trim() || '';
             const errEl = document.getElementById('profileError');
             if (errEl) { errEl.style.display = 'none'; }
+            if (!displayName) {
+                if (errEl) { errEl.querySelector('span').textContent = '表示名を入力してください'; errEl.style.display = 'flex'; }
+                return;
+            }
 
             const saveBtn = document.querySelector('.profile-page .btn-primary');
             const origLabel = '保存する';
             if (saveBtn) { saveBtn.disabled = true; saveBtn.innerHTML = '<span class="loading-spinner"></span> 保存中…'; }
             let succeeded = false;
             try {
-                const bioRes = await api({ action: 'updateProfile', token: state.token, bio });
+                const bioRes = await api({ action: 'updateProfile', token: state.token, bio, displayName });
                 if (!bioRes.success) {
                     if (errEl) { errEl.querySelector('span').textContent = bioRes.error; errEl.style.display = 'flex'; }
                     return;
                 }
                 state.bio = bio;
+                state.displayName = displayName;
+                localStorage.setItem('geko_displayName', displayName);
                 if (pendingIcon) {
                     const iconRes = await api({ action: 'updateProfile', token: state.token, bio: '', iconBase64: pendingIcon });
                     if (!iconRes.success) {
@@ -3271,9 +3314,11 @@
                     const res = await api({ action: 'checkToken', token: state.token });
                     if (res.success) {
                         state.username = res.username;
+                        state.displayName = res.displayName || res.username;
                         state.iconBase64 = res.iconBase64 || state.iconBase64;
                         state.bio = res.bio || '';
                         localStorage.setItem('geko_username', res.username);
+                        localStorage.setItem('geko_displayName', state.displayName);
                         const { page, user } = getUrlParams();
                         if (page || user) {
                             await dispatchPage(page, user);
