@@ -1146,6 +1146,17 @@
             font-weight: 500;
         }
 
+        .action-btn .action-spinner {
+            width: 15px;
+            height: 15px;
+            border: 2px solid var(--border);
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+
         /* 引用ブロック */
         .quote-block {
             margin-top: 10px;
@@ -2099,6 +2110,14 @@
                 const res = await api({ action: 'login', username, password });
                 if (res.success) {
                     saveSession(res.token, res.userId, res.username);
+                    // アイコンをログイン直後に取得してからタイムライン描画
+                    try {
+                        const profileRes = await api({ action: 'checkToken', token: res.token });
+                        if (profileRes.success && profileRes.iconBase64) {
+                            state.iconBase64 = profileRes.iconBase64;
+                            localStorage.setItem('geko_icon', profileRes.iconBase64);
+                        }
+                    } catch { }
                     await loadTimeline();
                     pushUrl('');
                     await renderTimeline(false);
@@ -2454,6 +2473,13 @@
         }
 
         async function toggleLike(postId) {
+            const el = document.getElementById(`post-${postId}`);
+            const btn = el ? el.querySelector('.action-btn.liked, .action-btn:not(.reposted):first-child') : null;
+            // ボタンを特定してスピナー表示
+            const likeBtn = el ? el.querySelector(`.post-actions .action-btn:first-child`) : null;
+            const origHtml = likeBtn ? likeBtn.innerHTML : '';
+            const origDisabled = likeBtn ? likeBtn.disabled : false;
+            if (likeBtn) { likeBtn.disabled = true; likeBtn.innerHTML = `<span class="action-spinner"></span> <span class="count">${likeBtn.querySelector('.count')?.textContent || ''}</span>`; }
             try {
                 const res = await api({ action: 'like', token: state.token, postId });
                 if (res.success) {
@@ -2461,14 +2487,19 @@
                     if (post) {
                         post.likedByMe = res.liked;
                         post.likeCount = res.liked ? post.likeCount + 1 : Math.max(0, post.likeCount - 1);
-                        const el = document.getElementById(`post-${postId}`);
-                        if (el) el.outerHTML = postCardHtml(post);
+                        const cardEl = document.getElementById(`post-${postId}`);
+                        if (cardEl) cardEl.outerHTML = postCardHtml(post);
                     }
-                } else { showToast(res.error, 'error'); }
-            } catch { showToast('サーバーエラー', 'error'); }
+                } else { showToast(res.error, 'error'); if (likeBtn && likeBtn.isConnected) { likeBtn.disabled = origDisabled; likeBtn.innerHTML = origHtml; } }
+            } catch { showToast('サーバーエラー', 'error'); if (likeBtn && likeBtn.isConnected) { likeBtn.disabled = origDisabled; likeBtn.innerHTML = origHtml; } }
         }
 
         async function toggleRepost(postId) {
+            const cardEl = document.getElementById(`post-${postId}`);
+            const repostBtn = cardEl ? cardEl.querySelectorAll('.post-actions .action-btn')[1] : null;
+            const origHtml = repostBtn ? repostBtn.innerHTML : '';
+            const origDisabled = repostBtn ? repostBtn.disabled : false;
+            if (repostBtn) { repostBtn.disabled = true; repostBtn.innerHTML = `<span class="action-spinner"></span> <span class="count">${repostBtn.querySelector('.count')?.textContent || ''}</span>`; }
             try {
                 const res = await api({ action: 'repost', token: state.token, postId });
                 if (res.success) {
@@ -2480,8 +2511,8 @@
                         if (el) el.outerHTML = postCardHtml(post);
                         if (res.reposted) { await loadTimeline(); renderPosts(); }
                     }
-                } else { showToast(res.error, 'error'); }
-            } catch { showToast('サーバーエラー', 'error'); }
+                } else { showToast(res.error, 'error'); if (repostBtn && repostBtn.isConnected) { repostBtn.disabled = origDisabled; repostBtn.innerHTML = origHtml; } }
+            } catch { showToast('サーバーエラー', 'error'); if (repostBtn && repostBtn.isConnected) { repostBtn.disabled = origDisabled; repostBtn.innerHTML = origHtml; } }
         }
 
         async function deletePost(postId) {
@@ -2574,6 +2605,7 @@
         }
 
         async function doLogout() {
+            if (!confirm('ログアウトしますか？')) return;
             clearAutoRefresh();
             // スピナー表示
             const logoutBtns = document.querySelectorAll('.sidebar-nav-item, .mobile-nav-item');
@@ -2876,7 +2908,6 @@
       ${joinDate ? `<div class="user-profile-meta">${ICONS.calendar} ${joinDate} からゲコっている</div>` : ''}
       <div class="user-profile-actions">
         ${isMe ? `<button class="btn btn-primary btn-sm" onclick="render('profile-edit')">${ICONS.edit} プロフィールを編集</button>` : ''}
-        <button class="btn btn-secondary btn-sm" onclick="backToTimeline()">${ICONS.arrowLeft} タイムラインへ</button>
       </div>
     `;
 
@@ -2939,7 +2970,6 @@
       <div class="post-body">
         <div class="post-header">
           <span class="post-time">${formatTime(p.createdAt)}</span>
-          ${p.isQuote ? `<span style="font-size:11px;color:var(--quote-color);display:flex;align-items:center;gap:4px;width:37px;">${ICONS.quote} 引用再ゲコ</span>` : ''}
           ${p.isEdited ? '<span style="font-size:11px;color:var(--text-muted)">(編集済み)</span>' : ''}
         </div>
         ${contentHtml}
@@ -2996,11 +3026,14 @@
 
         async function toggleLikeOnUserPage(postId, btn) {
             if (!state.token) { showToast('ログインが必要です', 'error'); return; }
+            const origHtml = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = `<span class="action-spinner"></span> <span class="count">${btn.querySelector('.count')?.textContent || ''}</span>`;
             try {
                 const res = await api({ action: 'like', token: state.token, postId });
                 if (res.success) {
                     const countEl = btn.querySelector('.count');
-                    const cur = parseInt(countEl.textContent) || 0;
+                    const cur = parseInt(countEl ? countEl.textContent : '0') || 0;
                     if (res.liked) {
                         btn.classList.add('liked');
                         btn.innerHTML = `${ICONS.heartFill} <span class="count">${cur + 1}</span>`;
@@ -3008,8 +3041,9 @@
                         btn.classList.remove('liked');
                         btn.innerHTML = `${ICONS.heart} <span class="count">${Math.max(0, cur - 1)}</span>`;
                     }
-                } else { showToast(res.error, 'error'); }
-            } catch { showToast('サーバーエラー', 'error'); }
+                } else { showToast(res.error, 'error'); btn.innerHTML = origHtml; }
+            } catch { showToast('サーバーエラー', 'error'); btn.innerHTML = origHtml; }
+            finally { btn.disabled = false; }
         }
 
         async function deletePostFromUserPage(postId) {
