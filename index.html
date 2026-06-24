@@ -1832,9 +1832,9 @@
         // ============================================================
         // 設定
         // ============================================================
-        const GAS_URL = 'https://script.google.com/macros/s/AKfycbxFgcUDKby6DRV9nvWDk9FlehLkw8mFBy7UxrQ9MFbvBbj26yoHosMZZJygrC5m6Wna/exec';
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycbxWJIQqNQvhsQ8YUazwCxEK2LT9RgU9AlYd4YzlgwIC0IM0iUgEaZhXvUwMobCLJZk/exec';
         const MAX_POST_LENGTH = 500;
-        const AUTO_REFRESH_INTERVAL = 10000;
+        const AUTO_REFRESH_INTERVAL = 10000; // 10秒
 
         // ============================================================
         // 状態管理
@@ -1853,6 +1853,7 @@
             page: 'landing',
             quotingPost: null,
             editingPost: null,
+            isRefreshing: false, // 自動更新の二重実行防止
         };
 
         // ============================================================
@@ -2504,6 +2505,7 @@
                     document.getElementById('postContent').value = '';
                     updateCharCount();
                     closePostModal();
+                    // 投稿後は先頭から再取得（最新1件だけ反映）
                     await loadTimeline();
                     renderPosts();
                     if (hasGeko) showToast('ゲコ！', 'success');
@@ -2597,13 +2599,37 @@
             clearAutoRefresh();
             state.autoRefreshTimer = setInterval(async () => {
                 if (state.page !== 'timeline') return;
+                if (state.isRefreshing) return; // 二重実行防止
+                state.isRefreshing = true;
                 try {
                     const res = await api({ action: 'getTimeline', token: state.token, offset: 0 });
                     if (res.success && res.posts.length > 0) {
-                        const newPosts = res.posts.filter(np => !state.posts.some(op => op.postId === np.postId));
-                        if (newPosts.length > 0) { state.posts = [...newPosts, ...state.posts]; renderPosts(); }
+                        // 既存の最新postIdと比較して差分のみ追加
+                        const existingIds = new Set(state.posts.map(p => p.postId));
+                        const newPosts = res.posts.filter(np => !existingIds.has(np.postId));
+                        if (newPosts.length > 0) {
+                            state.posts = [...newPosts, ...state.posts];
+                            renderPosts();
+                        } else {
+                            // いいね数などが変わった投稿を差分更新（DOM更新最小化）
+                            let changed = false;
+                            res.posts.forEach(np => {
+                                const idx = state.posts.findIndex(p => p.postId === np.postId);
+                                if (idx !== -1) {
+                                    const op = state.posts[idx];
+                                    if (op.likeCount !== np.likeCount || op.repostCount !== np.repostCount) {
+                                        state.posts[idx] = { ...op, likeCount: np.likeCount, repostCount: np.repostCount };
+                                        changed = true;
+                                        // カード単体だけ更新
+                                        const el = document.getElementById('post-' + np.postId);
+                                        if (el) el.outerHTML = postCardHtml(state.posts[idx]);
+                                    }
+                                }
+                            });
+                        }
                     }
                 } catch { }
+                finally { state.isRefreshing = false; }
             }, AUTO_REFRESH_INTERVAL);
         }
 
